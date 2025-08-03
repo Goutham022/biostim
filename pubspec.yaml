@@ -17,6 +17,18 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
+  
+  # State management
+  get: ^4.6.6
+  
+  # WiFi scanning and connection
+  wifi_scan: ^0.4.0+3
+  
+  # App settings
+  app_settings: ^5.1.1
+  
+  # Permission handling
+  permission_handler: ^11.3.1
 
 dev_dependencies:
   flutter_test:
@@ -45,11 +57,16 @@ flutter:
     - assets/onboarding/device.png
     - assets/onboarding/biostep_plus_logo.png
     - assets/onboarding/bs_logo3_crop.jpg
+    - assets/onboarding/device_icon.png
     - assets/gifs/power_button.gif
     - assets/gifs/pairing_button.gif
-    - assets/gifs/Searching radius.gif  
-      # - assets/images/hand_tap.png
-      # - assets/images/hand_press.png
+    - assets/gifs/Searching_radius.gif
+    - assets/gifs/loading.gif
+    - assets/gifs/correct.gif
+    - assets/onboarding/device_icon_small.png
+    - assets/onboarding/image.png
+    - assets/onboarding/search_failed.png
+    - assets/onboarding/failed.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
@@ -67,7 +84,6 @@ flutter:
       fonts:
         - asset: assets/fonts/Montserrat-Regular.ttf
         - asset: assets/fonts/Montserrat-Bold.ttf
-        - asset: assets/fonts/Montserrat-.ttf
           weight: 700
   #   - family: Schyler
   #     fonts:

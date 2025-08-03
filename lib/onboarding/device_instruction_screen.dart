@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../screens/wifi_pairing_screen.dart';
 
 class DeviceInstructionScreen extends StatelessWidget {
   const DeviceInstructionScreen({super.key});
@@ -154,7 +155,12 @@ class DeviceInstructionScreen extends StatelessWidget {
       height: buttonHeight,
       child: ElevatedButton(
         onPressed: () {
-          // Handle next action
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const WifiPairingScreen(),
+            ),
+          );
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xFF424242),
