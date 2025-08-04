@@ -94,7 +94,7 @@ class _ConnectingScreenState extends State<ConnectingScreen>
                   width: isLargeTablet ? 80 : (isTablet ? 70 : 60),
                   height: isLargeTablet ? 80 : (isTablet ? 70 : 60),
                   child: Image.asset(
-                    'assets/images/image.png',
+                    'assets/onboarding/image.png',
                     fit: BoxFit.contain,
                     errorBuilder: (context, error, stackTrace) {
                       return Container(
@@ -144,7 +144,7 @@ class _ConnectingScreenState extends State<ConnectingScreen>
                   width: isLargeTablet ? 80 : (isTablet ? 70 : 60),
                   height: isLargeTablet ? 80 : (isTablet ? 70 : 60),
                   child: Image.asset(
-                    'assets/images/device_icon_small.png',
+                    'assets/onboarding/device_icon_small.png',
                     fit: BoxFit.contain,
                     errorBuilder: (context, error, stackTrace) {
                       return Container(

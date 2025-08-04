@@ -33,7 +33,7 @@ class ConnectionFailedScreen extends StatelessWidget {
                   width: isLargeTablet ? 80 : (isTablet ? 70 : 60),
                   height: isLargeTablet ? 80 : (isTablet ? 70 : 60),
                   child: Image.asset(
-                    'assets/images/image.png',
+                    'assets/onboarding/image.png',
                     fit: BoxFit.contain,
                     errorBuilder: (context, error, stackTrace) {
                       return Container(
@@ -71,7 +71,7 @@ class ConnectionFailedScreen extends StatelessWidget {
                           width: isLargeTablet ? 60 : (isTablet ? 50 : 40),
                           height: isLargeTablet ? 60 : (isTablet ? 50 : 40),
                           child: Image.asset(
-                            'assets/images/failed.png',
+                            'assets/onboarding/failed.png',
                             fit: BoxFit.contain,
                             errorBuilder: (context, error, stackTrace) {
                               return Container(
@@ -100,7 +100,7 @@ class ConnectionFailedScreen extends StatelessWidget {
                   width: isLargeTablet ? 80 : (isTablet ? 70 : 60),
                   height: isLargeTablet ? 80 : (isTablet ? 70 : 60),
                   child: Image.asset(
-                    'assets/images/device_icon_small.png',
+                    'assets/onboarding/device_icon_small.png',
                     fit: BoxFit.contain,
                     errorBuilder: (context, error, stackTrace) {
                       return Container(

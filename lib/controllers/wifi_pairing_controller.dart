@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:get/get.dart';
 import 'package:wifi_scan/wifi_scan.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -19,6 +20,78 @@ class WifiPairingController extends GetxController {
   
   // WiFi scan results
   var wifiNetworks = <WiFiAccessPoint>[].obs;
+  
+  // ESP32 IP address
+  static const String esp32IP = '192.168.4.1';
+  
+  // Enable WiFi automatically
+  Future<void> _enableWiFi() async {
+    try {
+      // Check if WiFi scanning is available
+      final canStartScan = await WiFiScan.instance.canStartScan();
+      
+      if (canStartScan == CanStartScan.yes) {
+        // Start scan to enable WiFi (this automatically turns on WiFi)
+        await WiFiScan.instance.startScan();
+        print('WiFi enabled automatically through scan');
+      } else {
+        print('WiFi scanning not available: $canStartScan');
+        // Try alternative method - start scan anyway
+        try {
+          await WiFiScan.instance.startScan();
+          print('WiFi enabled through alternative method');
+        } catch (e) {
+          print('Alternative WiFi enable failed: $e');
+        }
+      }
+    } catch (e) {
+      print('Error enabling WiFi: $e');
+    }
+  }
+  
+  // Check if WiFi is enabled
+  Future<bool> _isWiFiEnabled() async {
+    try {
+      final canStartScan = await WiFiScan.instance.canStartScan();
+      return canStartScan == CanStartScan.yes;
+    } catch (e) {
+      print('Error checking WiFi status: $e');
+      return false;
+    }
+  }
+  
+  // Check if connected to ESP32 WiFi network
+  Future<bool> _isConnectedToESP32() async {
+    try {
+      // Get all network interfaces
+      final interfaces = await NetworkInterface.list();
+      
+      for (var interface in interfaces) {
+        for (var addr in interface.addresses) {
+          // Check if the IP address is in the ESP32 network range (192.168.4.x)
+          if (addr.address.startsWith('192.168.4.')) {
+            print('Connected to ESP32 network: ${addr.address}');
+            return true;
+          }
+        }
+      }
+      
+      // Alternative: Try to ping ESP32 IP address
+      try {
+        final result = await InternetAddress(esp32IP).reverse();
+        print('ESP32 IP reachable: ${result.host}');
+        return true;
+      } catch (e) {
+        print('ESP32 IP not reachable: $e');
+      }
+      
+      print('Not connected to ESP32 network');
+      return false;
+    } catch (e) {
+      print('Error checking ESP32 connection: $e');
+      return false;
+    }
+  }
   
   @override
   void onInit() {
@@ -47,17 +120,19 @@ class WifiPairingController extends GetxController {
       return;
     }
     
-    // Automatically turn on WiFi
-    try {
-      await WiFiScan.instance.startScan();
-      print('WiFi scanning started - WiFi should be enabled automatically');
-    } catch (e) {
-      print('Error starting WiFi scan: $e');
-      Get.snackbar('WiFi Error', 'Please make sure WiFi is turned ON');
+    // Automatically turn on WiFi without opening settings
+    await _enableWiFi();
+    
+    // Verify WiFi is enabled
+    final isWiFiEnabled = await _isWiFiEnabled();
+    if (!isWiFiEnabled) {
+      print('WiFi may not be enabled - continuing with scan attempt');
+    } else {
+      print('WiFi is enabled and ready for scanning');
     }
     
-    // Start 60-second scan timer
-    _scanTimer = Timer(const Duration(seconds: 60), () {
+    // Start 30-second scan timer
+    _scanTimer = Timer(const Duration(seconds: 30), () {
       if (!deviceFound.value) {
         scanTimeout.value = true;
         isScanning.value = false;
@@ -101,6 +176,18 @@ class WifiPairingController extends GetxController {
                   timer.cancel();
                   currentScreen.value = 'device_found';
                   break;
+                }
+              }
+              
+              // Also check if connected to ESP32 WiFi network
+              if (!deviceFound.value) {
+                final isConnectedToESP32 = await _isConnectedToESP32();
+                if (isConnectedToESP32) {
+                  deviceFound.value = true;
+                  this.isScanning.value = false;
+                  _scanTimer?.cancel();
+                  timer.cancel();
+                  currentScreen.value = 'device_found';
                 }
               }
             }
@@ -148,10 +235,10 @@ class WifiPairingController extends GetxController {
     final delay = Duration(seconds: 3 + (DateTime.now().millisecond % 6));
     await Future.delayed(delay);
     
-    // Simulate 80% success rate
-    final success = DateTime.now().millisecond % 5 != 0;
+    // Check if connected to ESP32 WiFi network
+    final isConnectedToESP32 = await _isConnectedToESP32();
     
-    if (success) {
+    if (isConnectedToESP32) {
       connectionSuccess.value = true;
       isConnecting.value = false;
       _connectionTimer?.cancel();

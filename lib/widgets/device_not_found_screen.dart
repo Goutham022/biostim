@@ -21,6 +21,23 @@ class DeviceNotFoundScreen extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          // Title
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: EdgeInsets.only(left: 20, bottom: 30),
+              child: Text(
+                'Device Not Found',
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: 24,
+                  fontWeight: FontWeight.w400,
+                  color: const Color(0xFF424242),
+                ),
+              ),
+            ),
+          ),
+
           // Error image with concentric rings design
           Container(
             width: isLargeTablet ? 200 : (isTablet ? 180 : 150),
@@ -41,18 +58,6 @@ class DeviceNotFoundScreen extends StatelessWidget {
           ),
           
           SizedBox(height: isTablet ? 60 : 40),
-          
-          // Title
-          Text(
-            'Device Not Found',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontFamily: 'Montserrat',
-              fontSize: isLargeTablet ? 28 : (isTablet ? 24 : 20),
-              fontWeight: FontWeight.w600,
-              color: const Color(0xFF424242),
-            ),
-          ),
           
           SizedBox(height: isTablet ? 40 : 30),
           
@@ -121,45 +126,44 @@ class DeviceNotFoundScreen extends StatelessWidget {
           Row(
             children: [
               // Skip button
-              Expanded(
-                child: Container(
-                  height: isLargeTablet ? 60 : (isTablet ? 55 : 50),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      controller.goBack();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey[300],
-                      foregroundColor: Colors.grey[700],
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(isLargeTablet ? 30 : (isTablet ? 27 : 25)),
-                      ),
-                      elevation: 1,
+              Container(
+                width: isLargeTablet ? 120 : (isTablet ? 100 : 80),
+                height: isLargeTablet ? 40 : (isTablet ? 55 : 40),
+                child: ElevatedButton(
+                  onPressed: () {
+                    controller.goBack();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey[300],
+                    foregroundColor: Colors.grey[700], 
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(isLargeTablet ? 30 : (isTablet ? 27 : 25)),
                     ),
-                    child: Text(
-                      'Skip',
-                      style: TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontSize: isLargeTablet ? 18 : (isTablet ? 17 : 16),
-                        fontWeight: FontWeight.w600,
-                      ),
+                    elevation: 1,
+                  ),
+                  child: Text(
+                    'Skip',
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: isLargeTablet ? 12 : (isTablet ? 17 : 12),
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
               ),
-              
-              SizedBox(width: isTablet ? 15 : 10),
+              SizedBox(width: isTablet ? 10 : 5),
               
               // Retry Manually button
               Expanded(
+                flex: 2, // Reduced flex to make button less wide
                 child: Container(
-                  height: isLargeTablet ? 60 : (isTablet ? 55 : 50),
+                  height: isLargeTablet ? 40 : (isTablet ? 55 : 40),
                   child: ElevatedButton(
                     onPressed: () {
                       AppSettings.openAppSettings(type: AppSettingsType.wifi);
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue[600],
+                      backgroundColor: const Color(0xFF424242),
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(isLargeTablet ? 30 : (isTablet ? 27 : 25)),
@@ -170,20 +174,20 @@ class DeviceNotFoundScreen extends StatelessWidget {
                       'Retry Manually',
                       style: TextStyle(
                         fontFamily: 'Montserrat',
-                        fontSize: isLargeTablet ? 18 : (isTablet ? 17 : 16),
-                        fontWeight: FontWeight.w600,
+                        fontSize: isLargeTablet ? 16 : (isTablet ? 17 : 12),
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
                   ),
                 ),
               ),
+              SizedBox(width: isTablet ? 10 : 5),
               
-              SizedBox(width: isTablet ? 15 : 10),
-              
-              // Retry button with refresh icon
+              // Retry button
               Expanded(
                 child: Container(
-                  height: isLargeTablet ? 60 : (isTablet ? 55 : 50),
+                  height: isLargeTablet ? 40 : (isTablet ? 55 : 40),
+                  width: isLargeTablet ? 160 : (isTablet ? 140 : 160), // Increased widths by 20px
                   child: ElevatedButton(
                     onPressed: () {
                       controller.retryScanning();
@@ -196,23 +200,13 @@ class DeviceNotFoundScreen extends StatelessWidget {
                       ),
                       elevation: 2,
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Retry',
-                          style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontSize: isLargeTablet ? 18 : (isTablet ? 17 : 16),
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        SizedBox(width: isTablet ? 8 : 6),
-                        Icon(
-                          Icons.refresh,
-                          size: isLargeTablet ? 20 : (isTablet ? 18 : 16),
-                        ),
-                      ],
+                    child: Text(
+                      'Retry',
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontSize: isLargeTablet ? 12 : (isTablet ? 17 : 12),
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),
@@ -223,7 +217,6 @@ class DeviceNotFoundScreen extends StatelessWidget {
       ),
     );
   }
-  
   Widget _buildInstructionItem(
     BuildContext context,
     String text,
