@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:app_settings/app_settings.dart';
 import '../controllers/wifi_pairing_controller.dart';
+import '../screens/not_connected_screen.dart';
 
 class DeviceNotFoundScreen extends StatelessWidget {
   final WifiPairingController controller;
@@ -123,95 +124,105 @@ class DeviceNotFoundScreen extends StatelessWidget {
           SizedBox(height: isTablet ? 60 : 40),
           
           // Buttons arranged horizontally
-          Row(
-            children: [
-              // Skip button
-              Container(
-                width: isLargeTablet ? 120 : (isTablet ? 100 : 80),
-                height: isLargeTablet ? 40 : (isTablet ? 55 : 40),
-                child: ElevatedButton(
-                  onPressed: () {
-                    controller.goBack();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey[300],
-                    foregroundColor: Colors.grey[700], 
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(isLargeTablet ? 30 : (isTablet ? 27 : 25)),
-                    ),
-                    elevation: 1,
-                  ),
-                  child: Text(
-                    'Skip',
-                    style: TextStyle(
-                      fontFamily: 'Montserrat',
-                      fontSize: isLargeTablet ? 12 : (isTablet ? 17 : 12),
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(width: isTablet ? 10 : 5),
-              
-              // Retry Manually button
-              Expanded(
-                flex: 2, // Reduced flex to make button less wide
-                child: Container(
-                  height: isLargeTablet ? 40 : (isTablet ? 55 : 40),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      AppSettings.openAppSettings(type: AppSettingsType.wifi);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF424242),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(isLargeTablet ? 30 : (isTablet ? 27 : 25)),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: isTablet ? 20 : 10),
+            child: Row(
+              children: [
+                // Skip button
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    height: isLargeTablet ? 40 : (isTablet ? 55 : 40),
+                    margin: EdgeInsets.only(right: isTablet ? 8 : 5),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (context) => const NotConnectedScreen(),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey[300],
+                        foregroundColor: Colors.grey[700], 
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(isLargeTablet ? 30 : (isTablet ? 27 : 25)),
+                        ),
+                        elevation: 1,
                       ),
-                      elevation: 2,
-                    ),
-                    child: Text(
-                      'Retry Manually',
-                      style: TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontSize: isLargeTablet ? 16 : (isTablet ? 17 : 12),
-                        fontWeight: FontWeight.w400,
+                      child: Text(
+                        'Skip',
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: isLargeTablet ? 12 : (isTablet ? 17 : 12),
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              SizedBox(width: isTablet ? 10 : 5),
-              
-              // Retry button
-              Expanded(
-                child: Container(
-                  height: isLargeTablet ? 40 : (isTablet ? 55 : 40),
-                  width: isLargeTablet ? 160 : (isTablet ? 140 : 160), // Increased widths by 20px
-                  child: ElevatedButton(
-                    onPressed: () {
-                      controller.retryScanning();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF424242),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(isLargeTablet ? 30 : (isTablet ? 27 : 25)),
+                
+                // Retry Manually button
+                Expanded(
+                  flex: 2,
+                  child: Container(
+                    height: isLargeTablet ? 40 : (isTablet ? 55 : 40),
+                    margin: EdgeInsets.symmetric(horizontal: isTablet ? 8 : 5),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        AppSettings.openAppSettings(type: AppSettingsType.wifi);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF424242),
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(isLargeTablet ? 30 : (isTablet ? 27 : 25)),
+                        ),
+                        elevation: 2,
                       ),
-                      elevation: 2,
-                    ),
-                    child: Text(
-                      'Retry',
-                      style: TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontSize: isLargeTablet ? 12 : (isTablet ? 17 : 12),
-                        fontWeight: FontWeight.w600,
+                      child: Text(
+                        'Retry Manually',
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: isLargeTablet ? 16 : (isTablet ? 17 : 12),
+                          fontWeight: FontWeight.w400,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+                
+                // Retry button
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    height: isLargeTablet ? 40 : (isTablet ? 55 : 40),
+                    margin: EdgeInsets.only(left: isTablet ? 8 : 5),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        controller.retryScanning();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF424242),
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(isLargeTablet ? 30 : (isTablet ? 27 : 25)),
+                        ),
+                        elevation: 2,
+                      ),
+                      child: Text(
+                        'Retry',
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: isLargeTablet ? 12 : (isTablet ? 17 : 12),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
