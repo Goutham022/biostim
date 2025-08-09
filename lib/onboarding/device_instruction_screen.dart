@@ -45,6 +45,7 @@ class DeviceInstructionScreen extends StatelessWidget {
                         instruction: "Hold UP button for 1 sec to turn on Pairing Mode.",
                         gifAsset: 'assets/gifs/pairing_button.gif',
                         alignLeft: false,
+                        isSmaller: true,
                       ),
                       
                       SizedBox(height: isTablet ? 120 : 100), // Add space for the floating button
@@ -71,6 +72,7 @@ class DeviceInstructionScreen extends StatelessWidget {
     required String instruction,
     required String gifAsset,
     bool alignLeft = false,
+    bool isSmaller = false,
   }) {
     final screenSize = MediaQuery.of(context).size;
     final isTablet = screenSize.width > 600;
@@ -81,6 +83,11 @@ class DeviceInstructionScreen extends StatelessWidget {
     final containerHeight = isLargeTablet ? 300.0 : (isTablet ? 250.0 : 200.0);
     final gifHeight = isLargeTablet ? 280.0 : (isTablet ? 230.0 : 180.0);
     final spacing = isTablet ? 30.0 : 20.0;
+    
+    // Apply size reduction for smaller GIFs
+    final sizeMultiplier = isSmaller ? 1.0 : 1.5;
+    final finalContainerHeight = containerHeight * sizeMultiplier;
+    final finalGifHeight = gifHeight * sizeMultiplier;
     
     return Column(
       children: [
@@ -103,11 +110,11 @@ class DeviceInstructionScreen extends StatelessWidget {
                  // GIF Container
          Container(
            width: double.infinity,
-           height: containerHeight,
+           height: finalContainerHeight,
            child: Align(
              alignment: alignLeft ? Alignment.centerLeft : Alignment.center,
              child: Container(
-               height: gifHeight,
+               height: finalGifHeight,
                child: Image.asset(
                  gifAsset,
                  fit: BoxFit.contain,

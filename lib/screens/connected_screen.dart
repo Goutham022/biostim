@@ -308,30 +308,32 @@ class ConnectedScreen extends StatelessWidget {
     bool isLargeTablet,
   ) {
     return Expanded(
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const FootDropRehabPage(),
-              ),
-            );
-          },
+      child: Container(
+        height: isLargeTablet ? 120 : (isTablet ? 110 : 100),
+        decoration: BoxDecoration(
+          color: Colors.white,
           borderRadius: BorderRadius.circular(isLargeTablet ? 12 : (isTablet ? 10 : 8)),
-          child: Container(
-            height: isLargeTablet ? 120 : (isTablet ? 110 : 100),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(isLargeTablet ? 12 : (isTablet ? 10 : 8)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 8,
-                  offset: const Offset(0, 4),
-                ),
-              ],
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 8,
+              offset: const Offset(0, 4),
             ),
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () {
+              // Navigate to Foot Drop Rehab page when tapped
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const FootDropRehabPage(),
+                ),
+              );
+            },
+            borderRadius: BorderRadius.circular(isLargeTablet ? 12 : (isTablet ? 10 : 8)),
             child: Padding(
               padding: EdgeInsets.all(isLargeTablet ? 16 : (isTablet ? 14 : 12)),
               child: Column(

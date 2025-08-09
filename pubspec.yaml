@@ -60,18 +60,20 @@ flutter:
     - assets/onboarding/biostep_plus_logo.png
     - assets/onboarding/bs_logo3_crop.jpg
     - assets/onboarding/device_icon.png
+    - assets/onboarding/device_icon_small.png
+    - assets/onboarding/image.png
+    - assets/onboarding/search_failed.png
+    - assets/onboarding/failed.png
+    - assets/onboarding/heart_icon.png
+    - assets/onboarding/indian_flag.png
     - assets/gifs/power_button.gif
     - assets/gifs/pairing_button.gif
     - assets/gifs/Searching_radius.gif
     - assets/gifs/loading.gif
     - assets/gifs/correct.gif
-    - assets/onboarding/device_icon_small.png
-    - assets/onboarding/image.png
-    - assets/onboarding/search_failed.png
-    - assets/onboarding/failed.png
+    - assets/images/hand_press.png
+    - assets/images/hand_tap.png
     - assets/home_tab/Background.png
-    - assets/onboarding/heart_icon.png
-    - assets/onboarding/indian_flag.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
