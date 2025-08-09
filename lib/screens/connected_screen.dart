@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'foot_drop_rehab_page.dart';
 
 class ConnectedScreen extends StatelessWidget {
   const ConnectedScreen({super.key});
@@ -307,88 +308,101 @@ class ConnectedScreen extends StatelessWidget {
     bool isLargeTablet,
   ) {
     return Expanded(
-      child: Container(
-        height: isLargeTablet ? 120 : (isTablet ? 110 : 100),
-        decoration: BoxDecoration(
-          color: Colors.white,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const FootDropRehabPage(),
+              ),
+            );
+          },
           borderRadius: BorderRadius.circular(isLargeTablet ? 12 : (isTablet ? 10 : 8)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 8,
-              offset: const Offset(0, 4),
+          child: Container(
+            height: isLargeTablet ? 120 : (isTablet ? 110 : 100),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(isLargeTablet ? 12 : (isTablet ? 10 : 8)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
-          ],
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(isLargeTablet ? 16 : (isTablet ? 14 : 12)),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Custom Icon (Walking + Lightning)
-              Container(
-                width: isLargeTablet ? 32 : (isTablet ? 28 : 24),
-                height: isLargeTablet ? 32 : (isTablet ? 28 : 24),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Icon(
-                      Icons.directions_walk,
-                      size: isLargeTablet ? 32 : (isTablet ? 28 : 24),
-                      color: const Color(0xFF333333),
+            child: Padding(
+              padding: EdgeInsets.all(isLargeTablet ? 16 : (isTablet ? 14 : 12)),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Custom Icon (Walking + Lightning)
+                  Container(
+                    width: isLargeTablet ? 32 : (isTablet ? 28 : 24),
+                    height: isLargeTablet ? 32 : (isTablet ? 28 : 24),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Icon(
+                          Icons.directions_walk,
+                          size: isLargeTablet ? 32 : (isTablet ? 28 : 24),
+                          color: const Color(0xFF333333),
+                        ),
+                        Positioned(
+                          top: 0,
+                          right: 0,
+                          child: Icon(
+                            Icons.flash_on,
+                            size: isLargeTablet ? 16 : (isTablet ? 14 : 12),
+                            color: Colors.orange,
+                          ),
+                        ),
+                      ],
                     ),
-                    Positioned(
-                      top: 0,
-                      right: 0,
-                      child: Icon(
-                        Icons.flash_on,
-                        size: isLargeTablet ? 16 : (isTablet ? 14 : 12),
-                        color: Colors.orange,
-                      ),
+                  ),
+                  SizedBox(height: isTablet ? 8 : 6),
+                  
+                  // Title
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: isLargeTablet ? 16 : (isTablet ? 14 : 12),
+                      fontStyle: FontStyle.normal,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.black,
                     ),
-                  ],
-                ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: isTablet ? 4 : 2),
+                  
+                  // Subtitles
+                  Text(
+                    subtitle1,
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: isLargeTablet ? 12 : (isTablet ? 10 : 8),
+                      fontStyle: FontStyle.normal,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.grey[600],
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  Text(
+                    subtitle2,
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: isLargeTablet ? 12 : (isTablet ? 10 : 8),
+                      fontStyle: FontStyle.normal,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.grey[600],
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
-              SizedBox(height: isTablet ? 8 : 6),
-              
-              // Title
-              Text(
-                title,
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: isLargeTablet ? 16 : (isTablet ? 14 : 12),
-                  fontStyle: FontStyle.normal,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.black,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: isTablet ? 4 : 2),
-              
-              // Subtitles
-              Text(
-                subtitle1,
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: isLargeTablet ? 12 : (isTablet ? 10 : 8),
-                  fontStyle: FontStyle.normal,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.grey[600],
-                ),
-                textAlign: TextAlign.center,
-              ),
-              Text(
-                subtitle2,
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: isLargeTablet ? 12 : (isTablet ? 10 : 8),
-                  fontStyle: FontStyle.normal,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.grey[600],
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
+            ),
           ),
         ),
       ),

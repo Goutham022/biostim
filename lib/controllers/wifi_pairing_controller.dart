@@ -3,6 +3,9 @@ import 'dart:io';
 import 'package:get/get.dart';
 import 'package:wifi_scan/wifi_scan.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:wifi_iot/wifi_iot.dart';
+import 'package:flutter/services.dart';
+import 'package:app_settings/app_settings.dart';
 
 class WifiPairingController extends GetxController {
   // Observable variables
@@ -13,6 +16,7 @@ class WifiPairingController extends GetxController {
   var scanTimeout = false.obs;
   var connectionTimeout = false.obs;
   var currentScreen = 'scanning'.obs;
+  var wifiEnabled = false.obs;
   
   // Timers
   Timer? _scanTimer;
@@ -24,8 +28,92 @@ class WifiPairingController extends GetxController {
   // ESP32 IP address
   static const String esp32IP = '192.168.4.1';
   
-  // Enable WiFi automatically
+  // Platform channel for Android-specific WiFi operations
+  static const platform = MethodChannel('wifi_channel');
+  
+  // Enable WiFi automatically with platform-specific handling
   Future<void> _enableWiFi() async {
+    try {
+      if (Platform.isAndroid) {
+        // Get Android version
+        final androidVersion = await _getAndroidVersion();
+        print('Android version: $androidVersion');
+        
+        if (androidVersion <= 9) {
+          // For Android 9 and below, use wifi_iot package
+          await _enableWiFiAndroid9Below();
+        } else {
+          // For Android 10+, use wifi_scan package
+          await _enableWiFiAndroid10Plus();
+        }
+      } else {
+        // For iOS, use wifi_scan package
+        await _enableWiFiAndroid10Plus();
+      }
+    } catch (e) {
+      print('Error enabling WiFi: $e');
+      // Fallback: try to open WiFi settings
+      await _openWiFiSettings();
+    }
+  }
+  
+  // Get Android version
+  Future<int> _getAndroidVersion() async {
+    try {
+      if (Platform.isAndroid) {
+        final result = await platform.invokeMethod('getAndroidVersion');
+        return result ?? 0;
+      }
+      return 0;
+    } catch (e) {
+      print('Error getting Android version: $e');
+      return 0;
+    }
+  }
+  
+  // Enable WiFi for Android 9 and below using wifi_iot
+  Future<void> _enableWiFiAndroid9Below() async {
+    try {
+      // Check if WiFi is enabled
+      final isEnabled = await WiFiForIoTPlugin.isEnabled();
+      print('WiFi enabled status: $isEnabled');
+      
+      if (!isEnabled) {
+        // Try to enable WiFi
+        final result = await WiFiForIoTPlugin.setEnabled(true);
+        print('WiFi enable result: $result');
+        
+        if (result) {
+          // Wait a moment for WiFi to fully enable
+          await Future.delayed(const Duration(seconds: 2));
+          
+          // Verify WiFi is now enabled
+          final isNowEnabled = await WiFiForIoTPlugin.isEnabled();
+          print('WiFi enabled after attempt: $isNowEnabled');
+          
+          if (isNowEnabled) {
+            wifiEnabled.value = true;
+            print('WiFi enabled successfully for Android 9 and below');
+          } else {
+            print('Failed to enable WiFi for Android 9 and below');
+            await _openWiFiSettings();
+          }
+        } else {
+          print('Failed to enable WiFi programmatically');
+          await _openWiFiSettings();
+        }
+      } else {
+        wifiEnabled.value = true;
+        print('WiFi already enabled');
+      }
+    } catch (e) {
+      print('Error enabling WiFi for Android 9 and below: $e');
+      await _openWiFiSettings();
+    }
+  }
+  
+  // Enable WiFi for Android 10+ using wifi_scan
+  Future<void> _enableWiFiAndroid10Plus() async {
     try {
       // Check if WiFi scanning is available
       final canStartScan = await WiFiScan.instance.canStartScan();
@@ -33,27 +121,55 @@ class WifiPairingController extends GetxController {
       if (canStartScan == CanStartScan.yes) {
         // Start scan to enable WiFi (this automatically turns on WiFi)
         await WiFiScan.instance.startScan();
-        print('WiFi enabled automatically through scan');
+        wifiEnabled.value = true;
+        print('WiFi enabled automatically through scan for Android 10+');
       } else {
         print('WiFi scanning not available: $canStartScan');
         // Try alternative method - start scan anyway
         try {
           await WiFiScan.instance.startScan();
-          print('WiFi enabled through alternative method');
+          wifiEnabled.value = true;
+          print('WiFi enabled through alternative method for Android 10+');
         } catch (e) {
-          print('Alternative WiFi enable failed: $e');
+          print('Alternative WiFi enable failed for Android 10+: $e');
+          await _openWiFiSettings();
         }
       }
     } catch (e) {
-      print('Error enabling WiFi: $e');
+      print('Error enabling WiFi for Android 10+: $e');
+      await _openWiFiSettings();
+    }
+  }
+  
+  // Open WiFi settings as fallback
+  Future<void> _openWiFiSettings() async {
+    try {
+      await AppSettings.openAppSettings(type: AppSettingsType.wifi);
+      print('Opened WiFi settings');
+    } catch (e) {
+      print('Error opening WiFi settings: $e');
     }
   }
   
   // Check if WiFi is enabled
   Future<bool> _isWiFiEnabled() async {
     try {
-      final canStartScan = await WiFiScan.instance.canStartScan();
-      return canStartScan == CanStartScan.yes;
+      if (Platform.isAndroid) {
+        final androidVersion = await _getAndroidVersion();
+        
+        if (androidVersion <= 9) {
+          // For Android 9 and below, use wifi_iot
+          return await WiFiForIoTPlugin.isEnabled();
+        } else {
+          // For Android 10+, use wifi_scan
+          final canStartScan = await WiFiScan.instance.canStartScan();
+          return canStartScan == CanStartScan.yes;
+        }
+      } else {
+        // For iOS, use wifi_scan
+        final canStartScan = await WiFiScan.instance.canStartScan();
+        return canStartScan == CanStartScan.yes;
+      }
     } catch (e) {
       print('Error checking WiFi status: $e');
       return false;
@@ -85,6 +201,16 @@ class WifiPairingController extends GetxController {
         print('ESP32 IP not reachable: $e');
       }
       
+      // Additional check: Try to connect to ESP32 IP address
+      try {
+        final socket = await Socket.connect(esp32IP, 80, timeout: const Duration(seconds: 3));
+        await socket.close();
+        print('ESP32 IP connection successful');
+        return true;
+      } catch (e) {
+        print('ESP32 IP connection failed: $e');
+      }
+      
       print('Not connected to ESP32 network');
       return false;
     } catch (e) {
@@ -112,6 +238,10 @@ class WifiPairingController extends GetxController {
     currentScreen.value = 'scanning';
     deviceFound.value = false;
     scanTimeout.value = false;
+    wifiEnabled.value = false;
+    
+    // Enable WiFi immediately when scanning starts
+    await _enableWiFi();
     
     // Request location permission (required for WiFi scanning)
     var status = await Permission.location.request();
@@ -120,15 +250,13 @@ class WifiPairingController extends GetxController {
       return;
     }
     
-    // Automatically turn on WiFi without opening settings
-    await _enableWiFi();
-    
     // Verify WiFi is enabled
     final isWiFiEnabled = await _isWiFiEnabled();
     if (!isWiFiEnabled) {
       print('WiFi may not be enabled - continuing with scan attempt');
     } else {
       print('WiFi is enabled and ready for scanning');
+      wifiEnabled.value = true;
     }
     
     // Start 30-second scan timer
@@ -188,6 +316,23 @@ class WifiPairingController extends GetxController {
                   _scanTimer?.cancel();
                   timer.cancel();
                   currentScreen.value = 'device_found';
+                  print('ESP32 network detected - device found');
+                }
+              }
+              
+              // Additional check: If we're on the ESP32 network, consider device found
+              if (!deviceFound.value) {
+                try {
+                  final socket = await Socket.connect(esp32IP, 80, timeout: const Duration(seconds: 2));
+                  await socket.close();
+                  deviceFound.value = true;
+                  this.isScanning.value = false;
+                  _scanTimer?.cancel();
+                  timer.cancel();
+                  currentScreen.value = 'device_found';
+                  print('ESP32 IP reachable - device found');
+                } catch (e) {
+                  // ESP32 not reachable, continue scanning
                 }
               }
             }
@@ -243,11 +388,32 @@ class WifiPairingController extends GetxController {
       isConnecting.value = false;
       _connectionTimer?.cancel();
       currentScreen.value = 'connection_success';
+      
+      // Additional verification: Check if we can reach the ESP32 IP
+      try {
+        final socket = await Socket.connect(esp32IP, 80, timeout: const Duration(seconds: 5));
+        await socket.close();
+        print('ESP32 connection verified successfully');
+      } catch (e) {
+        print('ESP32 connection verification failed: $e');
+        // Even if verification fails, we still consider it connected if we're on the right network
+      }
     } else {
-      connectionTimeout.value = true;
-      isConnecting.value = false;
-      _connectionTimer?.cancel();
-      currentScreen.value = 'connection_failed';
+      // Try one more time after a short delay
+      await Future.delayed(const Duration(seconds: 2));
+      final retryConnection = await _isConnectedToESP32();
+      
+      if (retryConnection) {
+        connectionSuccess.value = true;
+        isConnecting.value = false;
+        _connectionTimer?.cancel();
+        currentScreen.value = 'connection_success';
+      } else {
+        connectionTimeout.value = true;
+        isConnecting.value = false;
+        _connectionTimer?.cancel();
+        currentScreen.value = 'connection_failed';
+      }
     }
   }
   

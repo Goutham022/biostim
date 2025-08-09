@@ -89,17 +89,69 @@ class ScanningScreen extends StatelessWidget {
           // Spacing between animation and subtitle
           SizedBox(height: isTablet ? 100 : 80),
           
-          // Subtitle below the animation
+          // WiFi Status and Instructions
           Padding(
             padding: EdgeInsets.symmetric(horizontal: isTablet ? 60 : 40),
-            child: Text(
-              'WiFi will be turned ON automatically',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: isLargeTablet ? 20 : (isTablet ? 18 : 16),
-                color: Colors.grey[600],
-              ),
+            child: Column(
+              children: [
+                // WiFi Status
+                Obx(() => Container(
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: controller.wifiEnabled.value ? Colors.green[50] : Colors.orange[50],
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: controller.wifiEnabled.value ? Colors.green[200]! : Colors.orange[200]!,
+                      width: 1,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        controller.wifiEnabled.value ? Icons.wifi : Icons.wifi_off,
+                        size: 20,
+                        color: controller.wifiEnabled.value ? Colors.green[600] : Colors.orange[600],
+                      ),
+                      SizedBox(width: 8),
+                      Text(
+                        controller.wifiEnabled.value ? 'WiFi Enabled' : 'Enabling WiFi...',
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: controller.wifiEnabled.value ? Colors.green[700] : Colors.orange[700],
+                        ),
+                      ),
+                    ],
+                  ),
+                )),
+                
+                SizedBox(height: 20),
+                
+                // Instructions
+                Text(
+                  'WiFi will be turned ON automatically',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: isLargeTablet ? 20 : (isTablet ? 18 : 16),
+                    color: Colors.grey[600],
+                  ),
+                ),
+                
+                SizedBox(height: 10),
+                
+                Text(
+                  'Please wait while we scan for your device',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: isLargeTablet ? 16 : (isTablet ? 14 : 12),
+                    color: Colors.grey[500],
+                  ),
+                ),
+              ],
             ),
           ),
 
