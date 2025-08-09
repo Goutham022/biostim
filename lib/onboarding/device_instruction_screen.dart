@@ -34,6 +34,7 @@ class DeviceInstructionScreen extends StatelessWidget {
                         context: context,
                         instruction: "Turn on device by pressing the round button once.",
                         gifAsset: 'assets/gifs/power_button.gif',
+                        alignLeft: false,
                       ),
                       
                       SizedBox(height: isTablet ? 60 : 0),
@@ -43,6 +44,7 @@ class DeviceInstructionScreen extends StatelessWidget {
                         context: context,
                         instruction: "Hold UP button for 1 sec to turn on Pairing Mode.",
                         gifAsset: 'assets/gifs/pairing_button.gif',
+                        alignLeft: false,
                       ),
                       
                       SizedBox(height: isTablet ? 120 : 100), // Add space for the floating button
@@ -68,6 +70,7 @@ class DeviceInstructionScreen extends StatelessWidget {
     required BuildContext context,
     required String instruction,
     required String gifAsset,
+    bool alignLeft = false,
   }) {
     final screenSize = MediaQuery.of(context).size;
     final isTablet = screenSize.width > 600;
@@ -101,7 +104,8 @@ class DeviceInstructionScreen extends StatelessWidget {
          Container(
            width: double.infinity,
            height: containerHeight,
-           child: Center(
+           child: Align(
+             alignment: alignLeft ? Alignment.centerLeft : Alignment.center,
              child: Container(
                height: gifHeight,
                child: Image.asset(
@@ -178,7 +182,7 @@ class DeviceInstructionScreen extends StatelessWidget {
               'Next',
               style: TextStyle(
                 fontSize: fontSize,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w400,
               ),
             ),
             SizedBox(width: isTablet ? 8 : 6),

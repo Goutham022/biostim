@@ -1,3 +1,4 @@
+import 'package:biostim/screens/foot_drop_rehab_page.dart';
 import 'package:flutter/material.dart';
 import 'onboarding/intro_screen.dart';
 import 'onboarding/device_instruction_screen.dart';
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-       home: const ConnectedScreen(),
+       home: const IntroScreen(),
       // home: const NotConnectedScreen(),
     );
   }

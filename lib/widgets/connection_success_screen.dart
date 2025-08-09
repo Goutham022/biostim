@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/wifi_pairing_controller.dart';
+import '../screens/connected_screen.dart';
 
 class ConnectionSuccessScreen extends StatelessWidget {
   final WifiPairingController controller;
@@ -143,8 +144,12 @@ class ConnectionSuccessScreen extends StatelessWidget {
             height: isLargeTablet ? 60 : (isTablet ? 55 : 50),
             child: ElevatedButton(
               onPressed: () {
-                // Navigate to next screen or go back
-                Get.back();
+                // Navigate to connected screen
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => const ConnectedScreen(),
+                  ),
+                );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green[600],

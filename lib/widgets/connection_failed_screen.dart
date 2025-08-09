@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:app_settings/app_settings.dart';
 import '../controllers/wifi_pairing_controller.dart';
+import '../screens/not_connected_screen.dart';
 
 class ConnectionFailedScreen extends StatelessWidget {
   final WifiPairingController controller;
@@ -221,6 +222,39 @@ class ConnectionFailedScreen extends StatelessWidget {
                   ),
                   child: Text(
                     'Retry',
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: isLargeTablet ? 18 : (isTablet ? 17 : 16),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+              
+              SizedBox(height: isTablet ? 20 : 15),
+              
+              // Skip button
+              Container(
+                width: double.infinity,
+                height: isLargeTablet ? 60 : (isTablet ? 55 : 50),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (context) => const NotConnectedScreen(),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey[300],
+                    foregroundColor: Colors.grey[700],
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(isLargeTablet ? 30 : (isTablet ? 27 : 25)),
+                    ),
+                    elevation: 1,
+                  ),
+                  child: Text(
+                    'Skip',
                     style: TextStyle(
                       fontFamily: 'Montserrat',
                       fontSize: isLargeTablet ? 18 : (isTablet ? 17 : 16),
