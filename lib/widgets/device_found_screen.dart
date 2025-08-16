@@ -12,23 +12,12 @@ class DeviceFoundScreen extends StatefulWidget {
   State<DeviceFoundScreen> createState() => _DeviceFoundScreenState();
 }
 
-class _DeviceFoundScreenState extends State<DeviceFoundScreen>
-    with TickerProviderStateMixin {
-  late AnimationController _rippleController;
-  late Animation<double> _rippleAnimation;
+class _DeviceFoundScreenState extends State<DeviceFoundScreen> {
   Timer? _timeoutTimer;
 
   @override
   void initState() {
     super.initState();
-    _rippleController = AnimationController(
-      duration: const Duration(seconds: 2),
-      vsync: this,
-    );
-    _rippleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _rippleController, curve: Curves.easeOut),
-    );
-    _rippleController.repeat();
     
     // Start 30-second timeout timer
     _timeoutTimer = Timer(const Duration(seconds: 30), () {
@@ -41,7 +30,6 @@ class _DeviceFoundScreenState extends State<DeviceFoundScreen>
   @override
   void dispose() {
     _timeoutTimer?.cancel();
-    _rippleController.dispose();
     super.dispose();
   }
 
@@ -51,62 +39,98 @@ class _DeviceFoundScreenState extends State<DeviceFoundScreen>
     final isTablet = screenSize.width > 600;
     final isLargeTablet = screenSize.width > 900;
     
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: Padding(
-          padding: EdgeInsets.only(left: 10, top: 32),
-          child: Text(
-            'Scanning for Devices...',
-            style: TextStyle(
-              fontFamily: 'Montserrat',
-              fontWeight: FontWeight.w100,
-              fontSize: isLargeTablet ? 28 : (isTablet ? 22 : 20),
-              color: Colors.black,
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: isTablet ? 40 : 20),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // Spacing between status bar and title
+          SizedBox(height: 75),
+          
+          // Title
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: EdgeInsets.only(left: 20, bottom: 50),
+              child: Text(
+                'Scanning for devices',
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: 24,
+                  fontWeight: FontWeight.w400,
+                  color: const Color(0xFF424242),
+                ),
+              ),
             ),
           ),
-        ),
-        centerTitle: false,
-        automaticallyImplyLeading: false,
-      ),
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Device icon with animated ripples
-            GestureDetector(
+
+          // Spacing between title and animation
+          SizedBox(height: isTablet ? 60 : 50),
+          
+          // Scanning animation with device icon in center
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: isTablet ? 60 : 40),
+            child: GestureDetector(
               onTap: () {
                 _timeoutTimer?.cancel(); // Cancel timeout when user taps
                 widget.controller.startConnection();
               },
               child: Container(
-                width: isLargeTablet ? 200 : (isTablet ? 180 : 150),
-                height: isLargeTablet ? 200 : (isTablet ? 180 : 150),
+                width: isLargeTablet ? 420 : (isTablet ? 380 : 240),
+                height: isLargeTablet ? 420 : (isTablet ? 380 : 240),
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    // Animated ripples
-                    AnimatedBuilder(
-                      animation: _rippleAnimation,
-                      builder: (context, child) {
-                        return CustomPaint(
-                          size: Size(
-                            isLargeTablet ? 200 : (isTablet ? 180 : 150),
-                            isLargeTablet ? 200 : (isTablet ? 180 : 150),
-                          ),
-                          painter: RipplePainter(
-                            animation: _rippleAnimation,
-                            color: Colors.grey.withOpacity(0.3),
+                    // Background gif
+                    Image.asset(
+                      'assets/gifs/Searching_radius.gif',
+                      fit: BoxFit.contain,
+                      gaplessPlayback: true,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          width: isLargeTablet ? 420 : (isTablet ? 380 : 240),
+                          height: isLargeTablet ? 420 : (isTablet ? 380 : 240),
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  width: 80,
+                                  height: 80,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: Colors.grey[400]!,
+                                      width: 3,
+                                    ),
+                                  ),
+                                  child: Center(
+                                    child: Icon(
+                                      Icons.wifi,
+                                      size: 40,
+                                      color: Colors.grey[400],
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 20),
+                                Text(
+                                  'Scanning...',
+                                  style: TextStyle(
+                                    fontFamily: 'Montserrat',
+                                    fontSize: isTablet ? 18 : 16,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         );
                       },
                     ),
                     
-                    // Device icon
+                    // Device icon in center
                     Container(
                       width: isLargeTablet ? 120 : (isTablet ? 100 : 80),
                       height: isLargeTablet ? 120 : (isTablet ? 100 : 80),
@@ -134,47 +158,30 @@ class _DeviceFoundScreenState extends State<DeviceFoundScreen>
                 ),
               ),
             ),
-            
-            SizedBox(height: isTablet ? 60 : 40),
-            
-            // Text
-            Text(
+          ),
+          
+          // Spacing between animation and subtitle
+          SizedBox(height: isTablet ? 120 : 100),
+          
+          // Subtitle below the animation
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: isTablet ? 60 : 40),
+            child: Text(
               'Device Found. Tap to Connect',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontFamily: 'Montserrat',
-                fontSize: isLargeTablet ? 24 : (isTablet ? 20 : 18),
+                fontSize: 16,
                 fontWeight: FontWeight.w400,
-                color: const Color(0xFF424242),
+                color: Colors.black,
               ),
             ),
-          ],
-        ),
+          ),
+
+          // Spacer to push everything up
+          Spacer(),
+        ],
       ),
     );
   }
-}
-
-// Custom painter for animated ripples
-class RipplePainter extends CustomPainter {
-  final Animation<double> animation;
-  final Color color;
-
-  RipplePainter({required this.animation, required this.color});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.0;
-
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = size.width / 2 * animation.value;
-
-    canvas.drawCircle(center, radius, paint);
-  }
-
-  @override
-  bool shouldRepaint(RipplePainter oldDelegate) => true;
 } 

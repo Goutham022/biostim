@@ -12,11 +12,11 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> {
   double angleValue = -12.5;
   double triggerAngleValue = 15.0;
   bool isPlaying = false;
-  String selectedDuration = '00:30';
-  String selectedPulseWidth = '200 μs';
+  String selectedDuration = '1';
+  String selectedPulseWidth = '100';
   
-  final List<String> durationOptions = ['00:15', '00:30', '00:45', '01:00'];
-  final List<String> pulseWidthOptions = ['100 μs', '200 μs', '300 μs', '400 μs'];
+  final List<String> durationOptions = ['1', '2', '3', '4', '5', '6', '7', '8','9', '10'];
+  final List<String> pulseWidthOptions = ['100', '200', '300', '400', '500'];
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +36,7 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> {
                 'Foot Drop Rehab',
                 style: TextStyle(
                     fontFamily: 'Montserrat',
-                  fontSize: 26,
+                  fontSize: 24,
                   fontWeight: FontWeight.w500,
                   color: Color(0xFF000000),
                 ),
@@ -47,15 +47,15 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> {
               // Top Card (Stacked Images)
               Container(
                 width: double.infinity,
-                height: 220,
+                height: 180,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 10,
-                      offset: const Offset(0, 5),
+                      color: const Color.fromARGB(18, 0, 0, 0),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
                     ),
                   ],
                 ),
@@ -69,33 +69,17 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> {
                         height: double.infinity,
                         decoration: const BoxDecoration(
                           image: DecorationImage(
-                            image: AssetImage('assets/home_tab/Background.png'),
+                            image: AssetImage('assets/images/home_tab/footdrop/Background.png'),
                             fit: BoxFit.cover,
                           ),
                         ),
                       ),
-                      // Foreground image - would be loaded from API
-                      // Center(
-                      //   child: Container(
-                      //     width: 120,
-                      //     height: 120,
-                      //     decoration: BoxDecoration(
-                      //       color: Colors.grey[300],
-                      //       borderRadius: BorderRadius.circular(60),
-                      //     ),
-                      //     child: const Icon(
-                      //       Icons.person,
-                      //       size: 60,
-                      //       color: Colors.grey,
-                      //     ),
-                      //   ),
-                      // ),
                     ],
                   ),
                 ),
               ),
               
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
               
               // Stimulation Control Card
               Container(
@@ -106,9 +90,9 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> {
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
+                      color: const Color.fromARGB(18, 0, 0, 0),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
                     ),
                   ],
                 ),
@@ -119,7 +103,7 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> {
                       'Stimulation',
                       style: TextStyle(
                         fontFamily: 'Montserrat',
-                        fontSize: 16,
+                        fontSize: 14,
                         fontWeight: FontWeight.w500,
                         color: Color(0xFF000000),
                       ),
@@ -204,43 +188,49 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> {
                     // Trigger button and count
                     Row(
                       children: [
+                        const SizedBox(width: 58), // Add space to move trigger button right
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                          // width: 100,
+                          height: 32,
+                          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
                           decoration: BoxDecoration(
                             color: const Color(0xFF333333),
                             borderRadius: BorderRadius.circular(25),
                           ),
-                          child: const Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                'Trigger',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              SizedBox(width: 8),
-                              Icon(Icons.flash_on_outlined, color: Colors.white, size: 18),
-                            ],
+                          child: TextButton(
+                            onPressed: () {
+                            print('trigger button pressed');
+                          },
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            minimumSize: Size.zero,
+                          ),
+                          child: const Text(
+                            'Trigger',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                            ),
                           ),
                         ),
+                        ),
                         const Spacer(),
-                        
                         Row(
                           children: [
+                            const SizedBox(width: 0 ),
                             Text(
                               '${stimulationValue.toInt()}/20',
                               style: const TextStyle(
                                 fontFamily: 'Montserrat',
-                                fontSize: 18,
+                                fontSize: 20,
                                 fontWeight: FontWeight.w400,
                                 color: Color(0xFF000000),
                               ),
                             ),
-                            const SizedBox(width: 4),
-                            const Icon(Icons.flash_on, size: 16, color: Colors.black),
+                            const SizedBox(width: 38),
+                            const Icon(Icons.flash_on, size: 20, color: Colors.black),
                           ],
                         ),
                       ],
@@ -249,9 +239,9 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> {
                 ),
               ),
               
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
               
-              // Angle and Trigger Angle Cards
+              // Live Angle and Trigger Angle Cards
               Row(
                 children: [
                   Expanded(
@@ -262,16 +252,16 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> {
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
+                            color: const Color.fromARGB(18, 0, 0, 0),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
                           ),
                         ],
                       ),
                       child: Column(
                         children: [
                           const Text(
-                            'Angle',
+                            'Live Angle',
                             style: TextStyle(
                               fontFamily: 'Montserrat',
                               fontSize: 14,
@@ -292,20 +282,31 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> {
                           const SizedBox(height: 12),
                           Container(
                             width: double.infinity,
-                            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+                            height: 32,
+
+                            //padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
                             decoration: BoxDecoration(
                               color: const Color(0xFF333333),
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            child: const Text(
-                              'Calibrate',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                              ),
+                            child: TextButton(
+                            onPressed: () {
+                            print('cali button pressed');
+                          },
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            minimumSize: Size.zero,
+                          ),
+                          child: const Text(
+                            'Calibrate',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
                             ),
+                          ),
+                        ),
                           ),
                         ],
                       ),
@@ -322,20 +323,20 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> {
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
+                            color: const Color.fromARGB(18, 0, 0, 0),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
                           ),
                         ],
                       ),
                       child: Column(
                         children: [
                           const Text(
-                            'Set Trigger Angle',
+                            'Trigger Angle',
                             style: TextStyle(
                               fontFamily: 'Montserrat',
                               fontSize: 14,
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.w400,
                               color: Color(0xFF000000),
                             ),
                           ),
@@ -363,7 +364,7 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> {
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 12,
-                                fontWeight: FontWeight.w600,
+                                fontWeight: FontWeight.w400,
                               ),
                             ),
                           ),
@@ -381,17 +382,17 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> {
                 children: [
                   // Program Card
                   Container(
-                    width: 210,
-                    height: 72,
+                    width: 200,
+                    height: 100,
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.08),
-                          blurRadius: 3,
-                          offset: const Offset(0, 1),
+                          color: const Color.fromARGB(18, 0, 0, 0),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
                         ),
                       ],
                     ),
@@ -417,10 +418,10 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> {
                             children: [
                               // Play Button
                               Container(
-                                width: 32,
-                                height: 32,
+                                width: 44,
+                                height: 44,
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFF5F5F5),
+                                  color: const Color(0xFF333333),
                                   shape: BoxShape.circle,
                                 ),
                                 child: IconButton(
@@ -431,23 +432,25 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> {
                                   },
                                   icon: const Icon(
                                     Icons.play_arrow,
-                                    color: Color(0xFF000000),
-                                    size: 20,
+                                    color: Colors.white,
+                                    size: 30,
                                   ),
                                   padding: EdgeInsets.zero,
                                 ),
                               ),
                               
-                              const SizedBox(width: 8),
+                              const SizedBox(width: 13),
                               
                               // Stop Button
                               Container(
-                                width: 32,
-                                height: 32,
+                                width: 40,
+                                height: 40,
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFF5F5F5),
+                                  color: const Color(0xFF333333),
                                   shape: BoxShape.circle,
                                 ),
+                              
+                                
                                 child: IconButton(
                                   onPressed: () {
                                     setState(() {
@@ -456,21 +459,20 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> {
                                   },
                                   icon: const Icon(
                                     Icons.stop,
-                                    color: Color(0xFF000000),
-                                    size: 20,
+                                    color: Colors.white,
+                                    size: 26,
                                   ),
                                   padding: EdgeInsets.zero,
                                 ),
                               ),
-                              
-                              const Spacer(),
+                              const SizedBox(width: 25),
                               
                               // Timer
                               const Text(
                                 '00:15',
                                 style: TextStyle(
                                   fontFamily: 'Montserrat',
-                                  fontSize: 16,
+                                  fontSize: 20,
                                   fontWeight: FontWeight.w400,
                                   color: Color(0xFF000000),
                                 ),
@@ -486,17 +488,17 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> {
                   
                   // Steps Card
                   Container(
-                    width: 110,
-                    height: 72,
+                    width: 108,
+                    height: 100,
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.08),
-                          blurRadius: 3,
-                          offset: const Offset(0, 1),
+                          color: const Color.fromARGB(18, 0, 0, 0),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
                         ),
                       ],
                     ),
@@ -522,7 +524,7 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> {
                             children: [
                               const Icon(
                                 Icons.directions_walk,
-                                size: 20,
+                                size: 30,
                                 color: Color(0xFF000000),
                               ),
                               
@@ -532,7 +534,7 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> {
                                 '35',
                                 style: TextStyle(
                                   fontFamily: 'Montserrat',
-                                  fontSize: 20,
+                                  fontSize: 24,
                                   fontWeight: FontWeight.w400,
                                   color: Color(0xFF000000),
                                 ),
@@ -551,15 +553,16 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> {
               // Advanced Settings Section
               Container(
                 width: double.infinity,
+                height: 215,
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
+                      color: const Color.fromARGB(18, 0, 0, 0),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
                     ),
                   ],
                 ),
@@ -571,7 +574,7 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> {
                       style: TextStyle(
                         fontFamily: 'Montserrat',
                         fontSize: 16,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w400,
                         color: Color(0xFF000000),
                       ),
                     ),
@@ -587,7 +590,7 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> {
                             'Set Trigger Angle Manually',
                             style: TextStyle(
                               fontFamily: 'Montserrat',
-                              fontSize: 14,
+                              fontSize: 13,
                               fontWeight: FontWeight.w500,
                               color: Color(0xFF000000),
                             ),
@@ -596,7 +599,7 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> {
                         const SizedBox(width: 12),
                         Expanded(
                           child: Container(
-                            height: 40,
+                            height: 28,
                             padding: const EdgeInsets.symmetric(horizontal: 12),
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -610,7 +613,7 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> {
                                 hintStyle: TextStyle(
                                   fontFamily: 'Montserrat',
                                   color: Color(0xFF555555),
-                                  fontSize: 14,
+                                  fontSize: 13,
                                 ),
                               ),
                               style: TextStyle(
@@ -624,7 +627,7 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> {
                       ],
                     ),
                     
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 6),
                     
                     // Set Stimulation Duration
                     Row(
@@ -635,7 +638,7 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> {
                             'Set Stimulation Duration',
                             style: TextStyle(
                               fontFamily: 'Montserrat',
-                              fontSize: 14,
+                              fontSize: 13,
                               fontWeight: FontWeight.w500,
                               color: Color(0xFF000000),
                             ),
@@ -644,7 +647,7 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> {
                         const SizedBox(width: 12),
                         Expanded(
                           child: Container(
-                            height: 40,
+                            height: 28,
                             padding: const EdgeInsets.symmetric(horizontal: 12),
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -655,7 +658,7 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> {
                               child: DropdownButton<String>(
                                 value: selectedDuration,
                                 isExpanded: true,
-                                icon: const Icon(Icons.keyboard_arrow_down, color: Colors.grey),
+                                icon: const Icon(Icons.keyboard_arrow_down, color: Color.fromARGB(255, 50, 50, 50)),
                                 items: durationOptions.map((String value) {
                                   return DropdownMenuItem<String>(
                                     value: value,
@@ -663,7 +666,7 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> {
                                       value,
                                       style: const TextStyle(
                                         fontFamily: 'Montserrat',
-                                        fontSize: 14,
+                                        fontSize: 13,
                                         color: Color(0xFF000000),
                                       ),
                                     ),
@@ -681,7 +684,7 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> {
                       ],
                     ),
                     
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 6),
                     
                     // Set Pulse Width
                     Row(
@@ -692,7 +695,7 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> {
                             'Set Pulse Width',
                             style: TextStyle(
                               fontFamily: 'Montserrat',
-                              fontSize: 14,
+                              fontSize: 13,
                               fontWeight: FontWeight.w500,
                               color: Color(0xFF000000),
                             ),
@@ -701,7 +704,7 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> {
                         const SizedBox(width: 12),
                         Expanded(
                           child: Container(
-                            height: 40,
+                            height: 28,
                             padding: const EdgeInsets.symmetric(horizontal: 12),
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -712,7 +715,7 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> {
                               child: DropdownButton<String>(
                                 value: selectedPulseWidth,
                                 isExpanded: true,
-                                icon: const Icon(Icons.keyboard_arrow_down, color: Colors.grey),
+                                icon: const Icon(Icons.keyboard_arrow_down, color: Color.fromARGB(255, 50, 50, 50)),
                                 items: pulseWidthOptions.map((String value) {
                                   return DropdownMenuItem<String>(
                                     value: value,
@@ -720,7 +723,7 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> {
                                       value,
                                       style: const TextStyle(
                                         fontFamily: 'Montserrat',
-                                        fontSize: 14,
+                                        fontSize: 13,
                                         color: Color(0xFF000000),
                                       ),
                                     ),
@@ -737,6 +740,40 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> {
                         ),
                       ],
                     ),
+                    
+                    const SizedBox(height: 16),
+                    
+                    // Add Update Button
+                    Center(
+                      child: Container(
+                         width: 100,
+                         height: 32,
+                        // padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 0.5),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF333333),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: TextButton(
+                          onPressed: () {
+                            print('Update button pressed');
+                          },
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            minimumSize: Size.zero,
+                          ),
+                          child: const Text(
+                            'Update',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    
                   ],
                 ),
               ),
@@ -747,4 +784,4 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> {
       ),
     );
   }
-} 
+}

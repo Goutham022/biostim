@@ -2,11 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/wifi_pairing_controller.dart';
 import '../screens/connected_screen.dart';
+import 'dart:async';
 
-class ConnectionSuccessScreen extends StatelessWidget {
+class ConnectionSuccessScreen extends StatefulWidget {
   final WifiPairingController controller;
   
   const ConnectionSuccessScreen({super.key, required this.controller});
+
+  @override
+  State<ConnectionSuccessScreen> createState() => _ConnectionSuccessScreenState();
+}
+
+class _ConnectionSuccessScreenState extends State<ConnectionSuccessScreen> {
+  Timer? _navigationTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    // Start timer to navigate after 5 seconds
+    _navigationTimer = Timer(const Duration(seconds: 5), () {
+      Get.off(() => const ConnectedScreen());
+    });
+  }
+
+  @override
+  void dispose() {
+    _navigationTimer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,158 +40,158 @@ class ConnectionSuccessScreen extends StatelessWidget {
     return Container(
       width: double.infinity,
       height: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: isTablet ? 40 : 20),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Connection visualization with success
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.symmetric(horizontal: isTablet ? 80 : 40),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // Phone image
-                Container(
-                  width: isLargeTablet ? 80 : (isTablet ? 70 : 60),
-                  height: isLargeTablet ? 80 : (isTablet ? 70 : 60),
-                  child: Image.asset(
-                    'assets/onboarding/image.png',
-                    fit: BoxFit.contain,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        width: isLargeTablet ? 80 : (isTablet ? 70 : 60),
-                        height: isLargeTablet ? 80 : (isTablet ? 70 : 60),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[300],
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Icon(
-                          Icons.phone_android,
-                          size: isLargeTablet ? 40 : (isTablet ? 35 : 30),
-                          color: Colors.grey[600],
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                
-                // Success animation
-                Expanded(
-                  child: Container(
-                    height: isLargeTablet ? 80 : (isTablet ? 70 : 60),
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        // Green connection lines
-                        CustomPaint(
-                          size: Size(double.infinity, isLargeTablet ? 80 : (isTablet ? 70 : 60)),
-                          painter: ConnectionLinesPainter(),
-                        ),
-                        
-                        // Success GIF
-                        Container(
-                          width: isLargeTablet ? 60 : (isTablet ? 50 : 40),
-                          height: isLargeTablet ? 60 : (isTablet ? 50 : 40),
-                          child: Image.asset(
-                            'assets/gifs/correct.gif',
-                            fit: BoxFit.contain,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
-                                width: isLargeTablet ? 60 : (isTablet ? 50 : 40),
-                                height: isLargeTablet ? 60 : (isTablet ? 50 : 40),
-                                decoration: BoxDecoration(
-                                  color: Colors.green[100],
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Icon(
-                                  Icons.check,
-                                  size: isLargeTablet ? 30 : (isTablet ? 25 : 20),
-                                  color: Colors.green[600],
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                
-                // Device icon
-                Container(
-                  width: isLargeTablet ? 80 : (isTablet ? 70 : 60),
-                  height: isLargeTablet ? 80 : (isTablet ? 70 : 60),
-                  child: Image.asset(
-                    'assets/onboarding/device_icon_small.png',
-                    fit: BoxFit.contain,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        width: isLargeTablet ? 80 : (isTablet ? 70 : 60),
-                        height: isLargeTablet ? 80 : (isTablet ? 70 : 60),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[300],
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Icon(
-                          Icons.devices,
-                          size: isLargeTablet ? 40 : (isTablet ? 35 : 30),
-                          color: Colors.grey[600],
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
+          // Spacing between status bar and title
+          SizedBox(height: 75),
           
-          SizedBox(height: isTablet ? 80 : 60),
-          
-          // Success text
-          Text(
-            'Connected Successfully',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontFamily: 'Montserrat',
-              fontSize: isLargeTablet ? 28 : (isTablet ? 24 : 20),
-              fontWeight: FontWeight.w600,
-              color: Colors.green[700],
-            ),
-          ),
-          
-          SizedBox(height: isTablet ? 60 : 40),
-          
-          // Continue button
-          Container(
-            width: isLargeTablet ? 200 : (isTablet ? 180 : 150),
-            height: isLargeTablet ? 60 : (isTablet ? 55 : 50),
-            child: ElevatedButton(
-              onPressed: () {
-                // Navigate to connected screen
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => const ConnectedScreen(),
-                  ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green[600],
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(isLargeTablet ? 30 : (isTablet ? 27 : 25)),
-                ),
-                elevation: 2,
-              ),
+          // Title
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: EdgeInsets.only(left: 20, bottom: 50),
               child: Text(
-                'Continue',
+                'Connected Successfully',
                 style: TextStyle(
                   fontFamily: 'Montserrat',
-                  fontSize: isLargeTablet ? 18 : (isTablet ? 17 : 16),
-                  fontWeight: FontWeight.w600,
+                  fontSize: 24,
+                  fontWeight: FontWeight.w400,
+                  color: const Color(0xFF424242),
                 ),
               ),
             ),
           ),
+
+          // Spacing between title and animation
+          SizedBox(height: isTablet ? 60 : 50),
+          
+          // Connection visualization with success - matching connecting_screen container size
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: isTablet ? 60 : 40),
+            child: Container(
+              width: isLargeTablet ? 420 : (isTablet ? 380 : 240),
+              height: isLargeTablet ? 420 : (isTablet ? 380 : 240),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Phone image (left side) - matching connecting_screen size
+                  Container(
+                    width: isLargeTablet ? 120 : (isTablet ? 100 : 80),
+                    height: isLargeTablet ? 120 : (isTablet ? 100 : 80),
+                    child: Image.asset(
+                      'assets/onboarding/image.png',
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          width: isLargeTablet ? 120 : (isTablet ? 100 : 80),
+                          height: isLargeTablet ? 120 : (isTablet ? 100 : 80),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Icon(
+                            Icons.phone_android,
+                            size: isLargeTablet ? 60 : (isTablet ? 50 : 40),
+                            color: Colors.grey[600],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  
+                  // Success animation (center) - matching connecting_screen gif size
+                  Expanded(
+                    child: Container(
+                      height: isLargeTablet ? 120 : (isTablet ? 100 : 80),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          // Green connection lines
+                          CustomPaint(
+                            size: Size(double.infinity, isLargeTablet ? 120 : (isTablet ? 100 : 80)),
+                            painter: ConnectionLinesPainter(),
+                          ),
+                          
+                          // Success GIF - matching connecting_screen size
+                          Container(
+                            width: isLargeTablet ? 100 : (isTablet ? 80 : 60),
+                            height: isLargeTablet ? 100 : (isTablet ? 80 : 60),
+                            child: Image.asset(
+                              'assets/gifs/correct.gif',
+                              fit: BoxFit.contain,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Container(
+                                  width: isLargeTablet ? 100 : (isTablet ? 80 : 60),
+                                  height: isLargeTablet ? 100 : (isTablet ? 80 : 60),
+                                  decoration: BoxDecoration(
+                                    color: Colors.green[100],
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    Icons.check,
+                                    size: isLargeTablet ? 50 : (isTablet ? 40 : 30),
+                                    color: Colors.green[600],
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  
+                  // Device icon (right side) - matching connecting_screen size
+                  Container(
+                    width: isLargeTablet ? 120 : (isTablet ? 100 : 80),
+                    height: isLargeTablet ? 120 : (isTablet ? 100 : 80),
+                    child: Image.asset(
+                      'assets/onboarding/device_icon_small.png',
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          width: isLargeTablet ? 120 : (isTablet ? 100 : 80),
+                          height: isLargeTablet ? 120 : (isTablet ? 100 : 80),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Icon(
+                            Icons.devices,
+                            size: isLargeTablet ? 60 : (isTablet ? 50 : 40),
+                            color: Colors.grey[600],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          
+          // Spacing between animation and subtitle
+          SizedBox(height: isTablet ? 120 : 100),
+          
+          // Subtitle below the animation - matching connecting_screen styling
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: isTablet ? 60 : 40),
+            child: Text(
+              'Device Connected Successfully',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+                color: Colors.black,
+              ),
+            ),
+          ),
+
+          // Spacer to push everything up
+          Spacer(),
         ],
       ),
     );
@@ -180,7 +203,7 @@ class ConnectionLinesPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.green[400]!
+      ..color = const Color(0xFF79D976)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 3.0;
 

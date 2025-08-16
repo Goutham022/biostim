@@ -56,24 +56,9 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/onboarding/device.png
-    - assets/onboarding/biostep_plus_logo.png
-    - assets/onboarding/bs_logo3_crop.jpg
-    - assets/onboarding/device_icon.png
-    - assets/onboarding/device_icon_small.png
-    - assets/onboarding/image.png
-    - assets/onboarding/search_failed.png
-    - assets/onboarding/failed.png
-    - assets/onboarding/heart_icon.png
-    - assets/onboarding/indian_flag.png
-    - assets/gifs/power_button.gif
-    - assets/gifs/pairing_button.gif
-    - assets/gifs/Searching_radius.gif
-    - assets/gifs/loading.gif
-    - assets/gifs/correct.gif
-    - assets/images/hand_press.png
-    - assets/images/hand_tap.png
-    - assets/home_tab/Background.png
+    - assets/onboarding/
+    - assets/gifs/
+    - assets/images/home_tab/footdrop/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

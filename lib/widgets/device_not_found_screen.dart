@@ -19,212 +19,218 @@ class DeviceNotFoundScreen extends StatelessWidget {
       width: double.infinity,
       height: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: isTablet ? 40 : 20),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Title
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Padding(
-              padding: EdgeInsets.only(left: 20, bottom: 30),
-              child: Text(
-                'Device Not Found',
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: 24,
-                  fontWeight: FontWeight.w400,
-                  color: const Color(0xFF424242),
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            // Add top spacing to center content vertically
+            SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+            
+            // Title
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: EdgeInsets.only(left: 20, bottom: 50),
+                child: Text(
+                  'Device Not Found',
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 24,
+                    fontWeight: FontWeight.w400,
+                    color: const Color(0xFF424242),
+                  ),
                 ),
               ),
             ),
-          ),
+            // Add spacing before image
+            SizedBox(height: isTablet ? 50 : 40),
 
-          // Error image with concentric rings design
-          Container(
-            width: isLargeTablet ? 200 : (isTablet ? 180 : 150),
-            height: isLargeTablet ? 200 : (isTablet ? 180 : 150),
-            child: Image.asset(
-              'assets/onboarding/search_failed.png',
-              fit: BoxFit.contain,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  width: isLargeTablet ? 200 : (isTablet ? 180 : 150),
-                  height: isLargeTablet ? 200 : (isTablet ? 180 : 150),
-                  child: CustomPaint(
-                    painter: SearchFailedIconPainter(),
-                  ),
-                );
-              },
+            // Error image with concentric rings design - moved down
+            Container(
+              width: isLargeTablet ? 300 : (isTablet ? 250 : 200),
+              height: isLargeTablet ? 300 : (isTablet ? 250 : 200),
+              margin: EdgeInsets.only(top: isTablet ? 20 : 10),
+              child: Image.asset(
+                'assets/onboarding/search_failed.png',
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    width: isLargeTablet ? 350 : (isTablet ? 300 : 250),
+                    height: isLargeTablet ? 380 : (isTablet ? 320 : 280),
+                    child: CustomPaint(
+                      painter: SearchFailedIconPainter(),
+                    ),
+                  );
+                },
+              ),
             ),
-          ),
-          
-          SizedBox(height: isTablet ? 60 : 40),
-          
-          SizedBox(height: isTablet ? 40 : 30),
-          
-          // Instructions
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: isTablet ? 20 : 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                                 _buildInstructionItem(
-                   context,
-                   '1. Check WiFi again. Retry connecting after turning WiFi ON.',
-                   isTablet,
-                   isLargeTablet,
-                 ),
-                 SizedBox(height: isTablet ? 20 : 15),
-                 _buildInstructionItem(
-                   context,
-                   '2. Put the device into pairing mode again. It times out after some time.',
-                   isTablet,
-                   isLargeTablet,
-                 ),
-                 SizedBox(height: isTablet ? 20 : 15),
-                 _buildInstructionItem(
-                   context,
-                   '3. You can retry manually by going to WiFi settings and connecting to the following network.',
-                   isTablet,
-                   isLargeTablet,
-                 ),
-                 SizedBox(height: isTablet ? 15 : 10),
-                 // Network details
-                 Padding(
-                   padding: EdgeInsets.only(left: isTablet ? 35 : 27),
-                   child: Column(
-                     crossAxisAlignment: CrossAxisAlignment.start,
-                     children: [
-                       Text(
-                         'SSID - Biostep+',
-                         style: TextStyle(
-                           fontFamily: 'Montserrat',
-                           fontSize: isLargeTablet ? 16 : (isTablet ? 14 : 12),
-                           color: Colors.grey[700],
-                           height: 1.4,
-                         ),
-                       ),
-                       SizedBox(height: 5),
-                       Text(
-                         'Password - biostim@123',
-                         style: TextStyle(
-                           fontFamily: 'Montserrat',
-                           fontSize: isLargeTablet ? 16 : (isTablet ? 14 : 12),
-                           color: Colors.grey[700],
-                           height: 1.4,
-                         ),
-                       ),
-                     ],
+            SizedBox(height: isTablet ? 60 : 40),
+            
+            // Instructions
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: isTablet ? 20 : 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                                   _buildInstructionItem(
+                     context,
+                     '1. Check WiFi again. Retry connecting after turning WiFi ON.',
+                     isTablet,
+                     isLargeTablet,
                    ),
-                 ),
-              ],
+                   SizedBox(height: isTablet ? 20 : 15),
+                   _buildInstructionItem(
+                     context,
+                     '2. Put the device into pairing mode again. It times out after some time.',
+                     isTablet,
+                     isLargeTablet,
+                   ),
+                   SizedBox(height: isTablet ? 20 : 15),
+                   _buildInstructionItem(
+                     context,
+                     '3. You can retry manually by going to WiFi settings and connecting to the following network.',
+                     isTablet,
+                     isLargeTablet,
+                   ),
+                   SizedBox(height: isTablet ? 15 : 10),
+                   // Network details
+                   Padding(
+                     padding: EdgeInsets.only(left: isTablet ? 35 : 27),
+                     child: Column(
+                       crossAxisAlignment: CrossAxisAlignment.start,
+                       children: [
+                         Text(
+                           'SSID - Biostep+',
+                           style: TextStyle(
+                             fontFamily: 'Montserrat',
+                             fontSize: isLargeTablet ? 16 : (isTablet ? 14 : 12),
+                             color: Colors.grey[700],
+                             height: 1.4,
+                           ),
+                         ),
+                         SizedBox(height: 5),
+                         Text(
+                           'Password - biostim@123',
+                           style: TextStyle(
+                             fontFamily: 'Montserrat',
+                             fontSize: isLargeTablet ? 16 : (isTablet ? 14 : 12),
+                             color: Colors.grey[700],
+                             height: 1.4,
+                           ),
+                         ),
+                       ],
+                     ),
+                   ),
+                ],
+              ),
             ),
-          ),
-          
-          SizedBox(height: isTablet ? 60 : 40),
-          
-          // Buttons arranged horizontally
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: isTablet ? 20 : 10),
-            child: Row(
-              children: [
-                // Skip button
-                Expanded(
-                  flex: 1,
-                  child: Container(
-                    height: isLargeTablet ? 40 : (isTablet ? 55 : 40),
-                    margin: EdgeInsets.only(right: isTablet ? 8 : 5),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(
-                            builder: (context) => const NotConnectedScreen(),
+            
+            SizedBox(height: isTablet ? 60 : 40),
+            
+            // Buttons arranged horizontally
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: isTablet ? 20 : 10),
+              child: Row(
+                children: [
+                  // Skip button
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      height: isLargeTablet ? 40 : (isTablet ? 55 : 40),
+                      margin: EdgeInsets.only(right: isTablet ? 8 : 5),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(
+                              builder: (context) => const NotConnectedScreen(),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                         backgroundColor: const Color(0xFF424242),
+                          foregroundColor: Colors.white, 
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(isLargeTablet ? 30 : (isTablet ? 27 : 25)),
                           ),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey[300],
-                        foregroundColor: Colors.grey[700], 
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(isLargeTablet ? 30 : (isTablet ? 27 : 25)),
+                          elevation: 1,
                         ),
-                        elevation: 1,
-                      ),
-                      child: Text(
-                        'Skip',
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: isLargeTablet ? 12 : (isTablet ? 17 : 12),
-                          fontWeight: FontWeight.w600,
+                        child: Text(
+                          'Skip',
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: isLargeTablet ? 12 : (isTablet ? 17 : 12),
+                            fontWeight: FontWeight.w400,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                
-                // Retry Manually button
-                Expanded(
-                  flex: 2,
-                  child: Container(
-                    height: isLargeTablet ? 40 : (isTablet ? 55 : 40),
-                    margin: EdgeInsets.symmetric(horizontal: isTablet ? 8 : 5),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        AppSettings.openAppSettings(type: AppSettingsType.wifi);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF424242),
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(isLargeTablet ? 30 : (isTablet ? 27 : 25)),
+                  
+                  // Retry Manually button
+                  Expanded(
+                    flex: 2,
+                    child: Container(
+                      height: isLargeTablet ? 40 : (isTablet ? 55 : 40),
+                      margin: EdgeInsets.symmetric(horizontal: isTablet ? 8 : 5),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          AppSettings.openAppSettings(type: AppSettingsType.wifi);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF424242),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(isLargeTablet ? 30 : (isTablet ? 27 : 25)),
+                          ),
+                          elevation: 2,
                         ),
-                        elevation: 2,
-                      ),
-                      child: Text(
-                        'Retry Manually',
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: isLargeTablet ? 16 : (isTablet ? 17 : 12),
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                
-                // Retry button
-                Expanded(
-                  flex: 1,
-                  child: Container(
-                    height: isLargeTablet ? 40 : (isTablet ? 55 : 40),
-                    margin: EdgeInsets.only(left: isTablet ? 8 : 5),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        controller.retryScanning();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF424242),
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(isLargeTablet ? 30 : (isTablet ? 27 : 25)),
-                        ),
-                        elevation: 2,
-                      ),
-                      child: Text(
-                        'Retry',
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: isLargeTablet ? 12 : (isTablet ? 17 : 12),
-                          fontWeight: FontWeight.w600,
+                        child: Text(
+                          'Retry Manually',
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: isLargeTablet ? 16 : (isTablet ? 17 : 12),
+                            fontWeight: FontWeight.w400,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                  // Retry button
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      height: isLargeTablet ? 40 : (isTablet ? 55 : 40),
+                      margin: EdgeInsets.only(left: isTablet ? 8 : 5),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          controller.retryScanning();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF424242),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(isLargeTablet ? 30 : (isTablet ? 27 : 25)),
+                          ),
+                          elevation: 2,
+                        ),
+                        child: Text(
+                          'Retry',
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: isLargeTablet ? 12 : (isTablet ? 17 : 12),
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+            
+            // Add bottom spacing to prevent overflow
+            SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+          ],
+        ),
       ),
     );
   }
@@ -258,10 +264,10 @@ class DeviceNotFoundScreen extends StatelessWidget {
             ),
           ),
         ),
-             ],
-     );
+               ],
+       );
+     }
    }
- }
 
 // Custom painter for search failed icon with concentric rings
 class SearchFailedIconPainter extends CustomPainter {

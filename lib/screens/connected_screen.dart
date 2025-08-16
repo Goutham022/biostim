@@ -29,7 +29,7 @@ class ConnectedScreen extends StatelessWidget {
                         'Biostep Playground',
                         style: TextStyle(
                           fontFamily: 'Montserrat',
-                          fontSize: isLargeTablet ? 32 : (isTablet ? 28 : 26),
+                          fontSize: 24,
                           fontWeight: FontWeight.w400,
                           color: const Color(0xFF333333),
                         ),
@@ -44,9 +44,9 @@ class ConnectedScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(isLargeTablet ? 24 : (isTablet ? 22 : 20)),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 10,
-                            offset: const Offset(0, 5),
+                            color: const Color.fromARGB(18, 0, 0, 0),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
                           ),
                         ],
                       ),
@@ -65,7 +65,7 @@ class ConnectedScreen extends StatelessWidget {
                                     'Rehab Physio',
                                     style: TextStyle(
                                       fontFamily: 'Montserrat',
-                                      fontSize: isLargeTablet ? 24 : (isTablet ? 22 : 20),
+                                      fontSize: 20,
                                       fontWeight: FontWeight.w400,
                                       color: const Color(0xFF333333),
                                     ),
@@ -88,7 +88,7 @@ class ConnectedScreen extends StatelessWidget {
                                         'Connected',
                                         style: TextStyle(
                                           fontFamily: 'Montserrat',
-                                          fontSize: isLargeTablet ? 18 : (isTablet ? 16 : 14),
+                                          fontSize:14,
                                           fontWeight: FontWeight.w500,
                                           color: Colors.green,
                                         ),
@@ -103,7 +103,7 @@ class ConnectedScreen extends StatelessWidget {
                                     style: TextStyle(
                                       fontFamily: 'Montserrat',
                                       fontSize: isLargeTablet ? 16 : (isTablet ? 14 : 12),
-                                      color: Colors.grey[600],
+                                      color: Colors.black,
                                     ),
                                   ),
                                   SizedBox(height: isTablet ? 16 : 12),
@@ -206,6 +206,8 @@ class ConnectedScreen extends StatelessWidget {
                         _buildPlaceholderCard(isTablet, isLargeTablet),
                         SizedBox(width: isTablet ? 16 : 12),
                         _buildPlaceholderCard(isTablet, isLargeTablet),
+                        SizedBox(width: isTablet ? 16 : 12),
+                        _buildPlaceholderCard(isTablet, isLargeTablet),
                       ],
                     ),
                     
@@ -233,6 +235,8 @@ class ConnectedScreen extends StatelessWidget {
                       isTablet,
                       isLargeTablet,
                       [
+                        _buildPlaceholderCard(isTablet, isLargeTablet),
+                        SizedBox(width: isTablet ? 16 : 12),
                         _buildPlaceholderCard(isTablet, isLargeTablet),
                         SizedBox(width: isTablet ? 16 : 12),
                         _buildPlaceholderCard(isTablet, isLargeTablet),
@@ -315,9 +319,9 @@ class ConnectedScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(isLargeTablet ? 12 : (isTablet ? 10 : 8)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black12,
+              color: const Color.fromARGB(18, 0, 0, 0),
               blurRadius: 8,
-              offset: const Offset(0, 4),
+              offset: const Offset(0, 2),
             ),
           ],
         ),
@@ -425,9 +429,9 @@ class ConnectedScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(isLargeTablet ? 12 : (isTablet ? 10 : 8)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black12,
+              color: const Color.fromARGB(18, 0, 0, 0),
               blurRadius: 8,
-              offset: const Offset(0, 4),
+              offset: const Offset(0, 2),
             ),
           ],
         ),
@@ -491,9 +495,9 @@ class ConnectedScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(isLargeTablet ? 12 : (isTablet ? 10 : 8)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black12,
+              color: const Color.fromARGB(18, 0, 0, 0),
               blurRadius: 8,
-              offset: const Offset(0, 4),
+              offset: const Offset(0, 2),
             ),
           ],
         ),

@@ -15,108 +15,143 @@ class ConnectingScreen extends StatelessWidget {
     return Container(
       width: double.infinity,
       height: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: isTablet ? 40 : 20),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Connection visualization with GIF in center
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.symmetric(horizontal: isTablet ? 80 : 40),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // Phone image (left side)
-                Container(
-                  width: isLargeTablet ? 80 : (isTablet ? 70 : 60),
-                  height: isLargeTablet ? 80 : (isTablet ? 70 : 60),
-                  child: Image.asset(
-                    'assets/onboarding/image.png',
-                    fit: BoxFit.contain,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        width: isLargeTablet ? 80 : (isTablet ? 70 : 60),
-                        height: isLargeTablet ? 80 : (isTablet ? 70 : 60),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[300],
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Icon(
-                          Icons.phone_android,
-                          size: isLargeTablet ? 40 : (isTablet ? 35 : 30),
-                          color: Colors.grey[600],
-                        ),
-                      );
-                    },
-                  ),
+          // Spacing between status bar and title
+          SizedBox(height: 75),
+          
+          // Title
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: EdgeInsets.only(left: 20, bottom: 50),
+              child: Text(
+                'Connecting...',
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: 24,
+                  fontWeight: FontWeight.w400,
+                  color: const Color(0xFF424242),
                 ),
-                
-                // Loading GIF (center)
-                Expanded(
-                  child: Container(
-                    height: isLargeTablet ? 80 : (isTablet ? 70 : 60),
-                    child: Center(
-                      child: Container(
-                        width: isLargeTablet ? 60 : (isTablet ? 50 : 40),
-                        height: isLargeTablet ? 60 : (isTablet ? 50 : 40),
-                        child: Image.asset(
-                          'assets/gifs/loading.gif',
-                          fit: BoxFit.contain,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              width: isLargeTablet ? 60 : (isTablet ? 50 : 40),
-                              height: isLargeTablet ? 60 : (isTablet ? 50 : 40),
-                              child: CircularProgressIndicator(
-                                strokeWidth: 3,
-                                valueColor: AlwaysStoppedAnimation<Color>(Colors.grey[400]!),
-                              ),
-                            );
-                          },
+              ),
+            ),
+          ),
+
+          // Spacing between title and animation
+          SizedBox(height: isTablet ? 60 : 50),
+          
+          // Connection visualization with GIF in center - matching device_found_screen container size
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: isTablet ? 60 : 40),
+            child: Container(
+              width: isLargeTablet ? 420 : (isTablet ? 380 : 240),
+              height: isLargeTablet ? 420 : (isTablet ? 380 : 240),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Phone image (left side) - increased size
+                  Container(
+                    width: isLargeTablet ? 120 : (isTablet ? 100 : 80),
+                    height: isLargeTablet ? 120 : (isTablet ? 100 : 80),
+                    child: Image.asset(
+                      'assets/onboarding/image.png',
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          width: isLargeTablet ? 120 : (isTablet ? 100 : 80),
+                          height: isLargeTablet ? 120 : (isTablet ? 100 : 80),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Icon(
+                            Icons.phone_android,
+                            size: isLargeTablet ? 60 : (isTablet ? 50 : 40),
+                            color: Colors.grey[600],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  
+                  // Loading GIF (center) - increased size
+                  Expanded(
+                    child: Container(
+                      height: isLargeTablet ? 120 : (isTablet ? 100 : 80),
+                      child: Center(
+                        child: Container(
+                          width: isLargeTablet ? 100 : (isTablet ? 80 : 60),
+                          height: isLargeTablet ? 100 : (isTablet ? 80 : 60),
+                          child: Image.asset(
+                            'assets/gifs/loading.gif',
+                            fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                width: isLargeTablet ? 100 : (isTablet ? 80 : 60),
+                                height: isLargeTablet ? 100 : (isTablet ? 80 : 60),
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 3,
+                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.grey[400]!),
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                
-                // Device icon (right side)
-                Container(
-                  width: isLargeTablet ? 80 : (isTablet ? 70 : 60),
-                  height: isLargeTablet ? 80 : (isTablet ? 70 : 60),
-                  child: Image.asset(
-                    'assets/onboarding/device_icon_small.png',
-                    fit: BoxFit.contain,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        width: isLargeTablet ? 80 : (isTablet ? 70 : 60),
-                        height: isLargeTablet ? 80 : (isTablet ? 70 : 60),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[300],
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Icon(
-                          Icons.devices,
-                          size: isLargeTablet ? 40 : (isTablet ? 35 : 30),
-                          color: Colors.grey[600],
-                        ),
-                      );
-                    },
+                  
+                  // Device icon (right side) - increased size
+                  Container(
+                    width: isLargeTablet ? 120 : (isTablet ? 100 : 80),
+                    height: isLargeTablet ? 120 : (isTablet ? 100 : 80),
+                    child: Image.asset(
+                      'assets/onboarding/device_icon_small.png',
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          width: isLargeTablet ? 120 : (isTablet ? 100 : 80),
+                          height: isLargeTablet ? 120 : (isTablet ? 100 : 80),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Icon(
+                            Icons.devices,
+                            size: isLargeTablet ? 60 : (isTablet ? 50 : 40),
+                            color: Colors.grey[600],
+                          ),
+                        );
+                      },
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           
-          SizedBox(height: isTablet ? 80 : 60),
+          // Spacing between animation and subtitle
+          SizedBox(height: isTablet ? 120 : 100),
           
-          // Text
-          Text(
-            'Trying to Connect. Please Wait',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontFamily: 'Montserrat',
-              fontSize: isLargeTablet ? 24 : (isTablet ? 20 : 18),
-              color: const Color(0xFF424242),
+          // Subtitle below the animation
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: isTablet ? 60 : 40),
+            child: Text(
+              'Trying to Connect. Please Wait',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+                color: Colors.black,
+              ),
             ),
           ),
+
+          // Spacer to push everything up
+          Spacer(),
         ],
       ),
     );
