@@ -1,13 +1,79 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:lottie/lottie.dart';
+import 'dart:async';
+import 'dart:math' as math;
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////start -nithin
+class ImuAngles {
+  /// Common aerospace convention:
+  ///   rollX = atan2(ay, az)
+  ///   pitchY = atan2(-ax, sqrt(ay^2 + az^2))
+  final double rollXDeg;
+  final double pitchYDeg;
+  final double rollYDeg; // <-- new, for roll around Y
+
+  const ImuAngles({
+    required this.rollXDeg,
+    required this.pitchYDeg,
+    required this.rollYDeg, // <-- new
+  });
+}
+
+
+ImuAngles computeAnglesFromAccel({
+  required num ax,
+  required num ay,
+  required num az,
+  bool addPitch90Offset = false,
+}) {
+  final double x = ax.toDouble();
+  final double y = ay.toDouble();
+  final double z = az.toDouble();
+
+  const double eps = 1e-9;
+
+  // Roll around X (usual)
+  final double rollXRad = -math.atan2(
+    y,
+    (z.abs() < eps ? (z >= 0 ? eps : -eps) : z),
+  );
+
+  // Pitch around Y (usual)
+  final double pitchYRad = math.atan2(
+    -x,
+    math.sqrt(y * y + z * z + eps),
+  );
+
+  // Roll around Y (optional)
+  final double rollYRad = math.atan2(
+    x,
+    (z.abs() < eps ? (z >= 0 ? eps : -eps) : z),
+  );
+
+  // Convert to degrees
+  final double rollXDeg = rollXRad * 180.0 / math.pi;
+  final double pitchYDeg = pitchYRad * 180.0 / math.pi;
+  final double rollYDeg = rollYRad * 180.0 / math.pi;
+
+  return ImuAngles(
+    rollXDeg:  rollXDeg + 90 ,   // <<-- added offset here
+    pitchYDeg: pitchYDeg,
+    rollYDeg:  rollYDeg,
+  );
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////End -nithin
 class FootDropRehabPage extends StatefulWidget {
   const FootDropRehabPage({super.key});
-
+  
   @override
   State<FootDropRehabPage> createState() => _FootDropRehabPageState();
 }
-
-class _FootDropRehabPageState extends State<FootDropRehabPage> {
+  
+class _FootDropRehabPageState extends State<FootDropRehabPage> with SingleTickerProviderStateMixin{//Made changes to use SingleTickerProviderStateMixin for AnimationController
   double stimulationValue = 10.0;
   double angleValue = -12.5;
   double triggerAngleValue = 15.0;
@@ -17,6 +83,190 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> {
   
   final List<String> durationOptions = ['1', '2', '3', '4', '5', '6', '7', '8','9', '10'];
   final List<String> pulseWidthOptions = ['100', '200', '300', '400', '500'];
+
+  late final AnimationController _lottieController;//nithin
+  double _sliderValue = 0.0;     // 0..1 for Lottie frames//nithin
+  double currentAngle = 0.0;     // from ESP (deg)//nithin 
+  late http.Client _client;// for HTTP connection//nithin
+  StreamSubscription<String>? _streamSub;// continous http data stream from ESP32//nithin
+  Timer? _angleTimer; // Timer for periodic angle fetching//nithin
+  Timer? _pollTimer;
+  bool _inFlight = false;           // prevent overlapping requests
+  Duration _interval = const Duration(milliseconds: 120);
+
+  int? accelXRaw, accelYRaw, accelZRaw;// Raw accelerometer values from ESP32//nithin
+  double pitchY_deg = 0.0;
+  // double rollX_deg = 0.0; // Roll around X-axis (deg) //nithin
+  double rollY_deg = 0.0; // Roll around Y-axis (deg)
+  Duration httpTimeout   = const Duration(milliseconds: 800);
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////start -nithin
+  // Function to send trigger data to the server
+
+  void startAccelPolling() {
+  _pollTimer?.cancel();
+  _pollTimer = Timer.periodic(_interval, (_) => _fetchAngleFromESP());
+}
+
+// Optional: call to stop (e.g., in pause or dispose)
+void stopAccelPolling() {
+  _pollTimer?.cancel();
+  _pollTimer = null;
+}
+
+  @override
+  void initState() {
+    super.initState();
+    startAccelPolling();
+    _lottieController = AnimationController(vsync: this);
+  _client = http.Client();
+  // _fetchAngleFromESP();
+    // Optional: start polling when widget mounts
+    _startAngleSimulation();
+  }
+
+
+
+  @override
+  void dispose() {
+    _lottieController.dispose();
+    _angleTimer?.cancel();
+    stopAccelPolling();
+    super.dispose();
+  }
+
+    void _startAngleSimulation() {
+    _angleTimer?.cancel();
+    _angleTimer = Timer.periodic(const Duration(milliseconds: 200), (_) {
+      _fetchAngleFromESP();
+    });
+  }
+
+  
+Future<void> sendTrigger({required int strength}) async {
+  try {
+    final res = await http
+        .post(
+          Uri.parse('http://192.168.4.1/Trigger'),
+          headers: const {
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode({
+            'Strength': strength,
+          }),
+        )
+        .timeout(const Duration(seconds: 1));
+
+    if (res.statusCode == 200) {
+      print('Trigger OK: ${res.body}');
+    } else {
+      print('Trigger failed: ${res.statusCode} ${res.body}');
+    }
+  } catch (e) {
+    print('Trigger error: $e');
+  }
+}
+
+
+
+ Future<void> _fetchAngleFromESP() async {
+  if (_inFlight) return;              // skip if last call still running
+  _inFlight = true;
+      try {
+      final res = await _client
+          .get(
+            Uri.parse('http://192.168.4.1/RawAccel'),
+            headers: const {
+              'Connection': 'keep-alive',
+            },
+          )
+          .timeout(httpTimeout);
+
+      if (res.statusCode == 200) {
+        final obj = jsonDecode(res.body);
+
+        // Read as int directly
+        final int? axRaw = (obj['accel_x'] as num?)?.toInt();
+        final int? ayRaw = (obj['accel_y'] as num?)?.toInt();
+        final int? azRaw = (obj['accel_z'] as num?)?.toInt();
+
+        // print("Raw Accel: ax=$axRaw, ay=$ayRaw, az=$azRaw");
+
+        if (axRaw != null && ayRaw != null && azRaw != null) {
+          accelXRaw = axRaw;
+          accelYRaw = ayRaw;
+          accelZRaw = azRaw;
+
+          // Convert to double for angle calculation
+          final angles = computeAnglesFromAccel(
+            ax: accelXRaw!.toDouble(),
+            ay: accelYRaw!.toDouble(),
+            az: accelZRaw!.toDouble(),
+            addPitch90Offset: true, // true to match ESP's +90 offset
+          );
+
+          final double rollX_deg = angles.rollXDeg;
+            pitchY_deg = angles.pitchYDeg;
+            rollY_deg = angles.rollYDeg; // <-- new, for roll around Y
+
+          // Print rolls
+          // print('Roll (X-axis): ${rollX_deg.toStringAsFixed(2)}°');
+          print('Pitch (Y-axis): ${rollX_deg.toStringAsFixed(2)}°');
+              setState(() {
+       currentAngle = rollX_deg; // or pitchDeg
+      _sliderValue = _mapAngleToLottieValue(currentAngle);
+      _lottieController.value = _sliderValue;
+
+      // If you also want to display raw values:
+      // accelXValue = ax; accelYValue = ay; accelZValue = az;
+    });
+          
+        }
+      }
+    }
+
+   catch (_) {
+    // swallow or add backoff if needed
+  } finally {
+    _inFlight = false;
+  }
+}
+
+  // Map your mechanical angle to Lottie progress [0..1]
+  // Adjust min/max to your use-case (e.g., -90..+90, 0..180, etc.)
+  double _mapAngleToLottieValue(double angleDeg) {
+    const double minDeg = -90;     // change if needed
+    const double maxDeg = 160;   // change if needed
+    final norm = ((angleDeg - minDeg) / (maxDeg - minDeg)).clamp(0.0, 1.0);
+    return norm;
+  }
+
+
+
+Future<void> sendPulseWidth({required int pulseWidth,required int Offtime}) async {
+  try {
+    final res = await http
+        .post(
+          Uri.parse('http://192.168.4.1/pulseWidth'),
+          headers: const {'Content-Type': 'application/json',
+          },
+          body: jsonEncode({
+            'PulseWidth': pulseWidth,
+            'Offtime': Offtime, // Assuming you want to set Offtime to 10
+          }),
+        )
+        .timeout(const Duration(seconds: 1));
+
+    if (res.statusCode == 200) {
+      print('Pulse Width OK: ${res.body}');
+    } else {
+      print('Pulse Width failed: ${res.statusCode} ${res.body}'); 
+    }
+  } catch (e) {
+    print('Pulse Width error: $e');
+  }
+}
+
+  ////////////////////////////////////////////////////////////////////////// //////////////////////////////////End -nithin
 
   @override
   Widget build(BuildContext context) {
@@ -69,8 +319,42 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> {
                         height: double.infinity,
                         decoration: const BoxDecoration(
                           image: DecorationImage(
-                            image: AssetImage('assets/images/home_tab/footdrop/Background.png'),
-                            fit: BoxFit.cover,
+                            image: AssetImage('assets/images/home_tab/footdrop/Background_croped.png'),//Background image to Background_//nithin
+                            fit: BoxFit.contain,//Adjust to contain//nithin
+                          ),
+                        ),
+                      ),
+//////////////////////////////////////////////////////////////////////////////////////////////////////start -nithin
+///Added the WalkingLeg.json animation
+                      Center(
+                        child: SizedBox(
+                            width: 200, // set desired width
+                            height: 200, // set desired height
+                      child: Lottie.asset(
+                        'assets/images/home_tab/footdrop/WalkingLeg.json',
+                        controller: _lottieController,
+                        fit: BoxFit.contain,      // keeps aspect ratio inside the card
+                        alignment: Alignment.center,
+                        onLoaded: (composition) {
+                          _lottieController.duration = composition.duration;
+                          _lottieController.value = _sliderValue;
+                        },
+                      ),
+                        ),
+                    ),
+//////////////////////////////////////////////////////////////////////////////////////////////////////End -nithin
+                      
+                      Positioned(
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage('assets/images/home_tab/footdrop/Foreground_croped.png'),//Foreground image to Foreground_//nithin
+                              fit: BoxFit.contain,//Adjust to contain//nithin
+                            ),
                           ),
                         ),
                       ),
@@ -200,6 +484,7 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> {
                           child: TextButton(
                             onPressed: () {
                             print('trigger button pressed');
+                            sendTrigger(strength: 5);///Send strength and enable status to the server//nithin
                           },
                           style: TextButton.styleFrom(
                             padding: EdgeInsets.zero,
@@ -756,6 +1041,7 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> {
                         child: TextButton(
                           onPressed: () {
                             print('Update button pressed');
+                            sendPulseWidth(pulseWidth: 10,Offtime: 10);//Change pulse width to 10//nithin
                           },
                           style: TextButton.styleFrom(
                             padding: EdgeInsets.zero,
