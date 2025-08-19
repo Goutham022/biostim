@@ -83,6 +83,7 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> with SingleTicker
   
   final List<String> durationOptions = ['1', '2', '3', '4', '5', '6', '7', '8','9', '10'];
   final List<String> pulseWidthOptions = ['100', '200', '300', '400', '500'];
+  final List<int> strengthOptions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
   late final AnimationController _lottieController;//nithin
   double _sliderValue = 0.0;     // 0..1 for Lottie frames//nithin
@@ -91,6 +92,9 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> with SingleTicker
   StreamSubscription<String>? _streamSub;// continous http data stream from ESP32//nithin
   Timer? _angleTimer; // Timer for periodic angle fetching//nithin
   Timer? _pollTimer;
+  Timer? _fesTimer;
+  bool _firing = false;          // true while a stimulation window is active
+  Timer? _stopTimer; 
   bool _inFlight = false;           // prevent overlapping requests
   Duration _interval = const Duration(milliseconds: 120);
 
@@ -99,6 +103,10 @@ class _FootDropRehabPageState extends State<FootDropRehabPage> with SingleTicker
   // double rollX_deg = 0.0; // Roll around X-axis (deg) //nithin
   double rollY_deg = 0.0; // Roll around Y-axis (deg)
   Duration httpTimeout   = const Duration(milliseconds: 800);
+  double _calibrationOffset = 0.0;
+  double current_value = 0;
+  double? _prevValue;
+  int selectedStrength = 3;  
   ////////////////////////////////////////////////////////////////////////////////////////////////////////start -nithin
   // Function to send trigger data to the server
 
@@ -124,7 +132,25 @@ void stopAccelPolling() {
     _startAngleSimulation();
   }
 
-
+   Future<void> _sendStim(bool fire) async {
+  try {
+    final uri = Uri.parse('http://192.168.4.1/fire');
+    final body = jsonEncode({
+      "strength":strengthOptions[selectedStrength] ,
+      "fire": fire,
+    });
+    await _client
+        .post(
+          uri,
+          headers: {"Content-Type": "application/json"},
+          body: body,
+        )
+        .timeout(const Duration(milliseconds: 800));
+    // print('Sent fire=$fire strength=$selectedStrength');
+  } catch (_) {
+    // swallow/log if needed
+  }
+}
 
   @override
   void dispose() {
@@ -213,7 +239,7 @@ Future<void> sendTrigger({required int strength}) async {
           print('Pitch (Y-axis): ${rollX_deg.toStringAsFixed(2)}°');
               setState(() {
        currentAngle = rollX_deg; // or pitchDeg
-      _sliderValue = _mapAngleToLottieValue(currentAngle);
+      _sliderValue = _mapAngleToLottieValue(currentAngle - _calibrationOffset);
       _lottieController.value = _sliderValue;
 
       // If you also want to display raw values:
@@ -263,6 +289,54 @@ Future<void> sendPulseWidth({required int pulseWidth,required int Offtime}) asyn
     }
   } catch (e) {
     print('Pulse Width error: $e');
+  }
+}
+           
+void startFesTask() {
+  _fesTimer?.cancel();
+
+  _fesTimer = Timer.periodic(const Duration(milliseconds: 200), (_) async {
+    if (isPlaying) {
+      final current_value = currentAngle - _calibrationOffset;
+
+      // Rising edge: prev < trigger && curr >= trigger
+      if (!_firing &&
+          _prevValue != null &&
+          _prevValue! < triggerAngleValue &&
+          current_value >= triggerAngleValue) {
+
+        _firing = true;
+        _stopTimer?.cancel();          // clear any pending stop
+        await _sendStim(true);         // START stimulation
+
+        final secs = 1; // change the duration as needed
+        _stopTimer = Timer(Duration(seconds: secs), () async {
+          await _sendStim(false);      // STOP after duration
+          _firing = false;
+        });
+      }
+
+      _prevValue = current_value;
+    } else {
+      // If user paused, ensure we stop stimulation and clear timers
+      _stopTimer?.cancel();
+      if (_firing) {
+        await _sendStim(false);
+        _firing = false;
+      }
+      _fesTimer?.cancel();
+    }
+  });
+}
+
+void stopFesTask() {
+  _fesTimer?.cancel();
+  _fesTimer = null;
+  _stopTimer?.cancel();
+  _stopTimer = null;
+  if (_firing) {
+    _sendStim(false);  // best-effort stop
+    _firing = false;
   }
 }
 
@@ -344,20 +418,20 @@ Future<void> sendPulseWidth({required int pulseWidth,required int Offtime}) asyn
                     ),
 //////////////////////////////////////////////////////////////////////////////////////////////////////End -nithin
                       
-                      Positioned(
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            image: DecorationImage(
-                              image: AssetImage('assets/images/home_tab/footdrop/Foreground_croped.png'),//Foreground image to Foreground_//nithin
-                              fit: BoxFit.contain,//Adjust to contain//nithin
-                            ),
-                          ),
-                        ),
-                      ),
+                      // Positioned(
+                      //   top: 0,
+                      //   left: 0,
+                      //   right: 0,
+                      //   bottom: 0,
+                      //   child: Container(
+                      //     decoration: const BoxDecoration(
+                      //       image: DecorationImage(
+                      //         image: AssetImage('assets/images/home_tab/footdrop/Background_croped.png'),
+                      //         fit: BoxFit.contain,
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
@@ -556,7 +630,7 @@ Future<void> sendPulseWidth({required int pulseWidth,required int Offtime}) asyn
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            '${angleValue.toStringAsFixed(1)}°',
+                            '${(currentAngle - _calibrationOffset).toStringAsFixed(1)}°',
                             style: const TextStyle(
                               fontFamily: 'Montserrat',
                               fontSize: 24,
@@ -576,6 +650,9 @@ Future<void> sendPulseWidth({required int pulseWidth,required int Offtime}) asyn
                             ),
                             child: TextButton(
                             onPressed: () {
+                                setState(() {
+                                       _calibrationOffset = currentAngle; // whatever current is → new zero
+                                 });
                             print('cali button pressed');
                           },
                           style: TextButton.styleFrom(
@@ -712,11 +789,15 @@ Future<void> sendPulseWidth({required int pulseWidth,required int Offtime}) asyn
                                 child: IconButton(
                                   onPressed: () {
                                     setState(() {
-                                      isPlaying = true;
+                                      isPlaying = !isPlaying; // toggle
+                                      
                                     });
+                                      if (isPlaying) {
+                                        startFesTask();
+                                     }
                                   },
-                                  icon: const Icon(
-                                    Icons.play_arrow,
+                                  icon: Icon(
+                                    isPlaying ? Icons.pause : Icons.play_arrow,
                                     color: Colors.white,
                                     size: 30,
                                   ),
