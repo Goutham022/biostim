@@ -73,7 +73,7 @@ class WifiPairingController extends GetxController {
         for (var addr in interface.addresses) {
           // Check if the IP address is in the ESP32 network range (192.168.4.x)
           if (addr.address.startsWith('192.168.4.')) {
-            print('Connected to ESP32 network: ${addr.address}');
+            // print('Connected to ESP32 network: ${addr.address}');
             return true;
           }
         }
