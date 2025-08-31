@@ -203,7 +203,29 @@ class ConnectedScreen extends StatelessWidget {
                       isTablet,
                       isLargeTablet,
                       [
-                        _buildPlaceholderCard(isTablet, isLargeTablet),
+                        Container(
+                          width: isLargeTablet ? 160 : (isTablet ? 150 : 140),
+                          height: isLargeTablet ? 120 : (isTablet ? 110 : 100),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(isLargeTablet ? 12 : (isTablet ? 10 : 8)),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color.fromARGB(18, 0, 0, 0),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Center(
+                            child: Image.asset(
+                              'assets/images/home_tab/biofeedback/shoulder_abduction 1.png',
+                              width: isLargeTablet ? 64 : (isTablet ? 56 : 48),
+                              height: isLargeTablet ? 64 : (isTablet ? 56 : 48),
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                        ),
                         SizedBox(width: isTablet ? 16 : 12),
                         _buildPlaceholderCard(isTablet, isLargeTablet),
                         SizedBox(width: isTablet ? 16 : 12),

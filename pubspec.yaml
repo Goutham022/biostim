@@ -59,6 +59,8 @@ flutter:
     - assets/onboarding/
     - assets/gifs/
     - assets/images/home_tab/footdrop/
+    # - assets/images/home_tab/connected_screen/
+    - assets/images/home_tab/biofeedback/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
