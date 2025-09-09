@@ -130,30 +130,57 @@ class _DeviceFoundScreenState extends State<DeviceFoundScreen> {
                       },
                     ),
                     
-                    // Device icon in center
-                    Container(
-                      width: isLargeTablet ? 120 : (isTablet ? 100 : 80),
-                      height: isLargeTablet ? 120 : (isTablet ? 100 : 80),
-                      child: Image.asset(
-                        'assets/onboarding/device_icon.png',
-                        fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
+                    // Device icon in center - Make it tappable (only show when WiFi is available)
+                    Obx(() {
+                      // Only show the device icon when WiFi is available
+                      if (widget.controller.isConnectedToWiFi.value) {
+                        return GestureDetector(
+                          onTap: () {
+                            _timeoutTimer?.cancel(); // Cancel timeout when user taps
+                            print('👆 Device icon tapped - initiating WiFi connection via WifiConnector...');
+                            // Use Future.microtask to prevent blocking the UI thread
+                            Future.microtask(() {
+                              widget.controller.connectToBiostepWiFi();
+                            });
+                          },
+                          child: Container(
                             width: isLargeTablet ? 120 : (isTablet ? 100 : 80),
                             height: isLargeTablet ? 120 : (isTablet ? 100 : 80),
-                            decoration: BoxDecoration(
-                              color: Colors.grey[300],
-                              borderRadius: BorderRadius.circular(20),
+                            child: Image.asset(
+                              'assets/onboarding/device_icon.png',
+                              fit: BoxFit.contain,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Container(
+                                  width: isLargeTablet ? 120 : (isTablet ? 100 : 80),
+                                  height: isLargeTablet ? 120 : (isTablet ? 100 : 80),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[300],
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Icon(
+                                    Icons.devices,
+                                    size: isLargeTablet ? 60 : (isTablet ? 50 : 40),
+                                    color: Colors.grey[600],
+                                  ),
+                                );
+                              },
                             ),
-                            child: Icon(
-                              Icons.devices,
-                              size: isLargeTablet ? 60 : (isTablet ? 50 : 40),
-                              color: Colors.grey[600],
+                          ),
+                        );
+                      } else {
+                        // Show loading indicator when WiFi is not yet available
+                        return Container(
+                          width: isLargeTablet ? 120 : (isTablet ? 100 : 80),
+                          height: isLargeTablet ? 120 : (isTablet ? 100 : 80),
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              strokeWidth: 3,
+                              valueColor: AlwaysStoppedAnimation<Color>(Colors.grey[400]!),
                             ),
-                          );
-                        },
-                      ),
-                    ),
+                          ),
+                        );
+                      }
+                    }),
                   ],
                 ),
               ),
@@ -163,19 +190,23 @@ class _DeviceFoundScreenState extends State<DeviceFoundScreen> {
           // Spacing between animation and subtitle
           SizedBox(height: isTablet ? 120 : 100),
           
-          // Subtitle below the animation
+          // Subtitle below the animation - reactive to WiFi availability
           Padding(
             padding: EdgeInsets.symmetric(horizontal: isTablet ? 60 : 40),
-            child: Text(
-              'Device Found. Tap to Connect',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: 16,
-                fontWeight: FontWeight.w400,
-                color: Colors.black,
-              ),
-            ),
+            child: Obx(() {
+              return Text(
+                widget.controller.isConnectedToWiFi.value 
+                  ? 'Device Found. Tap the device icon to connect to WiFi'
+                  : 'Device Found. Waiting for WiFi to be available...',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.black,
+                ),
+              );
+            }),
           ),
 
           // Spacer to push everything up
