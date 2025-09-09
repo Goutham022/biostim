@@ -99,7 +99,7 @@ class DeviceNotFoundScreen extends StatelessWidget {
                        crossAxisAlignment: CrossAxisAlignment.start,
                        children: [
                          Text(
-                           'SSID - Biostep+',
+                           'SSID - bioSTEP+new',
                            style: TextStyle(
                              fontFamily: 'Montserrat',
                              fontSize: isLargeTablet ? 16 : (isTablet ? 14 : 12),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 
 class ShoulderAbductionPage extends StatefulWidget {
   const ShoulderAbductionPage({super.key});
@@ -19,8 +18,6 @@ class _ShoulderAbductionPageState extends State<ShoulderAbductionPage>
 
   // Overlay rotation state
   final ValueNotifier<double> overlayAngleRad = ValueNotifier(0.0);
-  AnimationController? _animationController;
-  Animation<double>? _rotationAnimation;
 
   final List<String> durationOptions = [
     '1',
@@ -57,9 +54,6 @@ class _ShoulderAbductionPageState extends State<ShoulderAbductionPage>
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isTablet = screenWidth > 600;
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -87,19 +81,18 @@ class _ShoulderAbductionPageState extends State<ShoulderAbductionPage>
                   final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
 
                   // Card width logic
-                  double maxCardWidth = isTablet ? 900 : 1200; // Limit card width on tablet
+                  double maxCardWidth = isTablet ? 900 : 1200;
                   double cardWidth = constraints.maxWidth < maxCardWidth
                       ? constraints.maxWidth
                       : maxCardWidth;
 
-                  // Card height logic (increased for phone based on screen size)
+                  // Card height logic
                   double cardHeight;
                   if (isTablet) {
-                    cardHeight = isLandscape ? 260 : 320; // Increased heights for tablet
+                    cardHeight = isLandscape ? 600 : 680;
                   } else {
-                    // For phone, set height as a percentage of screen height, min 180, max 260
                     double screenHeight = MediaQuery.of(context).size.height;
-                    cardHeight = (screenHeight * 0.22).clamp(180.0, 260.0);
+                    cardHeight = (screenHeight * 0.98).clamp(200.0, 300.0);
                   }
 
                   // In landscape, further limit height to avoid overflow
@@ -109,12 +102,6 @@ class _ShoulderAbductionPageState extends State<ShoulderAbductionPage>
                       cardHeight = availableHeight;
                     }
                   }
-
-                  // Image width logic (decreased a little)
-                  double imageMaxWidth = isTablet
-                      ? (cardWidth * 0.70).clamp(0, 500)
-                      : 500;
-                  double imageWidth = imageMaxWidth < cardWidth ? imageMaxWidth : cardWidth;
 
                   return Center(
                     child: Container(
@@ -131,69 +118,28 @@ class _ShoulderAbductionPageState extends State<ShoulderAbductionPage>
                           ),
                         ],
                       ),
-                      child: Center(
-                        child: SizedBox(
-                          width: imageWidth,
-                          height: cardHeight,
-                          child: Container(
-                            width: imageWidth,
-                            height: cardHeight,
-                            // Removed invalid 'borderRadius' parameter
-                            child: Stack(
-                              children: [
-                                Positioned.fill(
-                                  child: Container(
-                                    decoration: const BoxDecoration(
-                                      image: DecorationImage(
-                                        image: AssetImage(
-                                            'assets/images/home_tab/footdrop/Background.png'),
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                // Rotatable overlay image with anchor point moved a little down
-                                Align(
-                                  alignment: Alignment.topCenter,
-                                  child: ValueListenableBuilder<double>(
-                                    valueListenable: overlayAngleRad,
-                                    builder: (context, angle, child) {
-                                      // Define insets for clearance from card edges
-                                      const double sideInset = 16.0;
-                                      const double topInset = 12.0;
-                                      const double bottomInset = 12.0;
-
-                                      // Calculate available space for the overlay
-                                      final double innerW = imageWidth - (2 * sideInset);
-                                      final double innerH = cardHeight - topInset - bottomInset;
-
-                                      // Move the anchor point a little down (e.g., 10% from the top)
-                                      const double anchorYOffset = 0.10; // 10% down from the top
-
-                                      return SizedBox(
-                                        width: innerW,
-                                        height: innerH,
-                                        child: FittedBox(
-                                          fit: BoxFit.contain,
-                                          alignment: Alignment.topCenter,
-                                          child: RepaintBoundary(
-                                            child: Transform.rotate(
-                                              alignment: Alignment(0.0, -1.0 + 2 * anchorYOffset),
-                                              angle: angle,
-                                              child: Image.asset(
-                                                'assets/images/home_tab/footdrop/leg.png',
-                                                filterQuality: FilterQuality.high,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ],
+                      child: Container(
+                        padding: const EdgeInsets.only(left: 0, top: 10, right: 0, bottom: 10),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Stack(
+                          children: [
+                            // Background image fills the card, moved further to the left
+                            Positioned(
+                              left: -100,
+                              top: 5,
+                              bottom: 5,
+                              child: Image.asset(
+                                'assets/images/home_tab/biofeedback/Background[1].png',
+                                height: cardHeight,
+                                width: cardWidth,
+                                // fit: BoxFit.cover,
+                                // height: 300,
+                                // width: 300,
+                              ),
                             ),
-                          ),
+                          ],
                         ),
                       ),
                     ),
@@ -251,8 +197,7 @@ class _ShoulderAbductionPageState extends State<ShoulderAbductionPage>
                             ),
                             child: TextButton(
                               onPressed: () {
-                                print('cali button pressed');
-                                setOverlayAngleDegrees(45);
+                                setOverlayAngleDegrees(-90);
                               },
                               style: TextButton.styleFrom(
                                 padding: EdgeInsets.zero,
@@ -324,7 +269,7 @@ class _ShoulderAbductionPageState extends State<ShoulderAbductionPage>
                             ),
                             child: TextButton(
                               onPressed: () {
-                                print('cali button pressed');
+                                // Handle set angle
                               },
                               style: TextButton.styleFrom(
                                 padding: EdgeInsets.zero,
@@ -348,111 +293,346 @@ class _ShoulderAbductionPageState extends State<ShoulderAbductionPage>
                 ],
               ),
               const SizedBox(height: 24),
-
-              // Steps Card
-              Container(
-                height: 100,
-                width: 100,
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 12, vertical: 10),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color.fromARGB(18, 0, 0, 0),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    // Title
-                    const Text(
-                      'Timer',
-                      style: TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xFF000000),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    // Steps Icon and Count
-                    Card(
-                      color: Colors.grey[100],
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
-                            value: selectedDuration == 'NA' ? null : selectedDuration,
-                            hint: const Text('NA'),
-                            items: [
-                              const DropdownMenuItem(
-                                value: 'NA',
-                                child: Text('NA'),
-                              ),
-                              const DropdownMenuItem(
-                                value: '1',
-                                child: Text('1 Min'),
-                              ),
-                              const DropdownMenuItem(
-                                value: '2',
-                                child: Text('2 Min'),
-                              ),
-                              const DropdownMenuItem(
-                                value: '3',
-                                child: Text('3 Min'),
-                              ),
-                              const DropdownMenuItem(
-                                value: '4',
-                                child: Text('4 Min'),
-                              ),
-                              const DropdownMenuItem(
-                                value: '5',
-                                child: Text('5 Min'),
-                              ),
-                            ],
-                            onChanged: (value) {
-                              setState(() {
-                                selectedDuration = value ?? 'NA';
-                              });
-                            },
-                          ),
-                        ),
-                      ),
-                    ),
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            Icons.directions_walk,
-                            size: 24,
-                            color: Color(0xFF000000),
-                          ),
-                          const SizedBox(width: 6),
-                          const Text(
-                            '69',
-                            style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontSize: 20,
-                              fontWeight: FontWeight.w400,
-                              color: Color(0xFF000000),
-                            ),
+              
+              // Three cards in a row: Timer, Hold Time, Repetitions
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  // Timer Card
+                  Expanded(
+                    child: Container(
+                      height: 100,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color.fromARGB(18, 0, 0, 0),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
                           ),
                         ],
                       ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Timer',
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xFF000000),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Transform.translate(
+                            offset: const Offset(0, 2),
+                            child: Card(
+                              color: Colors.grey[100],
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 0.0),
+                                child: SizedBox(
+                                  height: 32,
+                                  width: 60,
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton<String>(
+                                      value: selectedDuration == 'NA' ? null : selectedDuration,
+                                      hint: const Text(
+                                        'NA',
+                                        style: TextStyle(fontSize: 12),
+                                      ),
+                                      items: [
+                                        const DropdownMenuItem(
+                                          value: 'NA',
+                                          child: Text('NA', style: TextStyle(fontSize: 12)),
+                                        ),
+                                        const DropdownMenuItem(
+                                          value: '1',
+                                          child: Text('1 Min', style: TextStyle(fontSize: 12)),
+                                        ),
+                                        const DropdownMenuItem(
+                                          value: '2',
+                                          child: Text('2 Min', style: TextStyle(fontSize: 12)),
+                                        ),
+                                        const DropdownMenuItem(
+                                          value: '3',
+                                          child: Text('3 Min', style: TextStyle(fontSize: 12)),
+                                        ),
+                                        const DropdownMenuItem(
+                                          value: '4',
+                                          child: Text('4 Min', style: TextStyle(fontSize: 12)),
+                                        ),
+                                        const DropdownMenuItem(
+                                          value: '5',
+                                          child: Text('5 Min', style: TextStyle(fontSize: 12)),
+                                        ),
+                                      ],
+                                      onChanged: (value) {
+                                        setState(() {
+                                          selectedDuration = value ?? 'NA';
+                                        });
+                                      },
+                                      isExpanded: true,
+                                      iconSize: 18,
+                                      style: const TextStyle(fontSize: 12, color: Colors.black),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                        ],
+                      ),
                     ),
-                  ],
+                  ),
+                  const SizedBox(width: 15),
+                  
+                  // Hold Time Card
+                  Expanded(
+                    child: Container(
+                      height: 120,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color.fromARGB(18, 0, 0, 0),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Hold Time',
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xFF000000),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Transform.translate(
+                            offset: const Offset(0, -2),
+                            child: Card(
+                              color: Colors.grey[100],
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 0.0),
+                                child: SizedBox(
+                                  height: 32,
+                                  width: 60,
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton<String>(
+                                      hint: const Text(
+                                        'NA',
+                                        style: TextStyle(fontSize: 12),
+                                      ),
+                                      items: const [
+                                        DropdownMenuItem(
+                                          value: 'NA',
+                                          child: Text('NA', style: TextStyle(fontSize: 12)),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: '1',
+                                          child: Text('0', style: TextStyle(fontSize: 12)),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: '2',
+                                          child: Text('1', style: TextStyle(fontSize: 12)),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: '3',
+                                          child: Text('2', style: TextStyle(fontSize: 12)),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: '4',
+                                          child: Text('3', style: TextStyle(fontSize: 12)),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: '5',
+                                          child: Text('4', style: TextStyle(fontSize: 12)),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: '6',
+                                          child: Text('5', style: TextStyle(fontSize: 12)),
+                                        ),
+                                      ],
+                                      onChanged: (value) {
+                                        setState(() {
+                                          // Handle hold time selection
+                                        });
+                                      },
+                                      iconSize: 18,
+                                      style: const TextStyle(fontSize: 12, color: Colors.black),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 15),
+                  
+                  // Repetitions Card
+                  Expanded(
+                    child: Container(
+                      height: 100,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color.fromARGB(18, 0, 0, 0),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Repetitions',
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xFF000000),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Transform.translate(
+                            offset: const Offset(0, 2),
+                            child: Card(
+                              color: Colors.grey[100],
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 1.0),
+                                child: SizedBox(
+                                  height: 32,
+                                  width: 60,
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton<String>(
+                                      hint: const Text(
+                                        'NA',
+                                        style: TextStyle(fontSize: 12),
+                                      ),
+                                      items: const [
+                                        DropdownMenuItem(
+                                          value: 'NA',
+                                          child: Text('NA', style: TextStyle(fontSize: 12)),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: '1',
+                                          child: Text('5', style: TextStyle(fontSize: 12)),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: '2',
+                                          child: Text('10', style: TextStyle(fontSize: 12)),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: '3',
+                                          child: Text('15', style: TextStyle(fontSize: 12)),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: '4',
+                                          child: Text('20', style: TextStyle(fontSize: 12)),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: '5',
+                                          child: Text('25', style: TextStyle(fontSize: 12)),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: '6',
+                                          child: Text('30', style: TextStyle(fontSize: 12)),
+                                        ),
+                                      ],
+                                      onChanged: (value) {
+                                        setState(() {
+                                          // Handle repetitions selection
+                                        });
+                                      },
+                                      iconSize: 18,
+                                      style: const TextStyle(fontSize: 12, color: Colors.black),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              
+              // Start Program Button
+              Container(
+                width: double.infinity,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF333333),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: TextButton(
+                  onPressed: () {
+                    // Handle start program
+                  },
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    minimumSize: Size.zero,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        'Start Program',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      const Icon(
+                        Icons.chevron_right,
+                        color: Colors.white,
+                        size: 18,
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              // const SizedBox(height: 24),
-              // const SizedBox(height: 32),
             ],
           ),
         ),

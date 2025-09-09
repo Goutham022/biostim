@@ -181,7 +181,7 @@ class ConnectionFailedScreen extends StatelessWidget {
                      crossAxisAlignment: CrossAxisAlignment.start,
                      children: [
                        Text(
-                         'SSID - Biostep+',
+                                                    'SSID - bioSTEP+new',
                          style: TextStyle(
                            fontFamily: 'Montserrat',
                            fontSize: isLargeTablet ? 16 : (isTablet ? 14 : 12),
@@ -284,7 +284,7 @@ class ConnectionFailedScreen extends StatelessWidget {
                     margin: EdgeInsets.only(left: isTablet ? 8 : 5),
                     child: ElevatedButton(
                       onPressed: () {
-                        controller.retryConnection();
+                        controller.retryFromConnectionFailed();
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF424242),
