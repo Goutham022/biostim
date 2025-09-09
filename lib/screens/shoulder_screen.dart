@@ -22,19 +22,6 @@ class _ShoulderAbductionPageState extends State<ShoulderAbductionPage>
   AnimationController? _animationController;
   Animation<double>? _rotationAnimation;
 
-  final List<String> durationOptions = [
-    '1',
-    '2',
-    '3',
-    '4',
-    '5',
-    '6',
-    '7',
-    '8',
-    '9',
-    '10'
-  ];
-  final List<String> pulseWidthOptions = ['100', '200', '300', '400', '500'];
 
   @override
   void initState() {
@@ -363,90 +350,6 @@ class _ShoulderAbductionPageState extends State<ShoulderAbductionPage>
                       color: const Color.fromARGB(18, 0, 0, 0),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    // Title
-                    const Text(
-                      'Timer',
-                      style: TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xFF000000),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    // Steps Icon and Count
-                    Card(
-                      color: Colors.grey[100],
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
-                            value: selectedDuration == 'NA' ? null : selectedDuration,
-                            hint: const Text('NA'),
-                            items: [
-                              const DropdownMenuItem(
-                                value: 'NA',
-                                child: Text('NA'),
-                              ),
-                              const DropdownMenuItem(
-                                value: '1',
-                                child: Text('1 Min'),
-                              ),
-                              const DropdownMenuItem(
-                                value: '2',
-                                child: Text('2 Min'),
-                              ),
-                              const DropdownMenuItem(
-                                value: '3',
-                                child: Text('3 Min'),
-                              ),
-                              const DropdownMenuItem(
-                                value: '4',
-                                child: Text('4 Min'),
-                              ),
-                              const DropdownMenuItem(
-                                value: '5',
-                                child: Text('5 Min'),
-                              ),
-                            ],
-                            onChanged: (value) {
-                              setState(() {
-                                selectedDuration = value ?? 'NA';
-                              });
-                            },
-                          ),
-                        ),
-                      ),
-                    ),
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            Icons.directions_walk,
-                            size: 24,
-                            color: Color(0xFF000000),
-                          ),
-                          const SizedBox(width: 6),
-                          const Text(
-                            '69',
-                            style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontSize: 20,
-                              fontWeight: FontWeight.w400,
-                              color: Color(0xFF000000),
-                            ),
-                          ),
-                        ],
-                      ),
                     ),
                   ],
                 ),

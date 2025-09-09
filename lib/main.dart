@@ -1,5 +1,5 @@
 import 'package:biostim/screens/foot_drop_rehab_page.dart';
-import 'package:biostim/screens/shoulder_screen.dart';
+//import 'package:biostim/screens/shoulder_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
       // home: ConnectingScreen(controller: Get.put(WifiPairingController())),
       //  home: IntroScreen(),
       // home: NotConnectedScreen(controller: Get.put(WifiPairingController())),
-       home: const ShoulderAbductionPage(),
+       home: const FootDropRehabPage()
     );
   }
 }
